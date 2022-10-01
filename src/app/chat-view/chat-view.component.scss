@@ -1,9 +1,16 @@
+.chat-view-section{
+    position: relative;
+}
+
 .nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: -2px 3px 4px 1px #dce4dc;
     border-radius: 19px;
+    // position: absolute;
+    // width: 100p;
+    // background-color: white;
 
 }
 
@@ -28,7 +35,7 @@
     background-color: #3b3a3a;
 }
 
-.message-body{
+.chat-view-body{
     display: flex;
     flex-direction: column;
 }
@@ -50,4 +57,22 @@
     // .send-button{
         
     // }
+}
+
+.message-list{
+    display: flex;
+    flex-direction: column;
+    // gap: 10px;
+}
+
+.message-list [ng-reflect-owner="true"]{
+    align-self: flex-end;
+}
+.message-list [ng-reflect-owner="false"]{
+    align-self: flex-start;
+}
+
+app-chat-bubble{
+    max-width: 60%;
+    min-width: 30%;
 }

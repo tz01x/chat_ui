@@ -1,6 +1,6 @@
-<section>
+<section class="chat-view-section">
   <nav class="nav">
-    <button mat-icon-button aria-label="go back button"> 
+    <button mat-icon-button aria-label="go back button" (click)="goBack()"> 
         <mat-icon>arrow_back</mat-icon>
     </button>
     <div class="username-placeholder" data-active="true">
@@ -10,26 +10,19 @@
         <mat-icon>info</mat-icon>
     </button>
   </nav>
-  <main class="message-body">
-        <div class="message-list">
-            <div class="message-bubble" data-owner="true">
-                <p>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod, numquam eius, iure odio facilis nostrum est fugit cupiditate, accusantium porro aperiam omnis fuga laboriosam quam aut quo explicabo! Officiis, excepturi!
-                </p>
-                <span>time</span>
-            </div>
-            <div class="message-bubble" data-owner="false">
-                <p>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod, numquam eius, iure odio facilis nostrum est fugit cupiditate, accusantium porro aperiam omnis fuga laboriosam quam aut quo explicabo! Officiis, excepturi!
-                </p>
-                <span>time</span>
-            </div>
+  <main class="chat-view-body">
+        <div class="message-list" #scroll>
+            <app-chat-bubble  *ngFor="let msg of chatService.getMessage(appState.authUser,username)"
+                [owner]="msg.username == appState.authUser" 
+                [timeStamp]="msg.timeStamp"
+                [textMessage]="msg.textMessage"
+            ></app-chat-bubble>
+
         </div>
         <div class="input-section">
-            
-            <input type="text" class="input-field">
+            <input type="text" class="input-field" [(ngModel)]="textMessage" (keydown)="sendMessage($event)" >
         
-              <button mat-raised-button  color="primary" class="send-button">
+              <button mat-raised-button  color="primary" class="send-button" (click)="sendMessage($event)">
                 <mat-icon>send</mat-icon>
             </button>
         </div>

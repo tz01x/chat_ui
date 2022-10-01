@@ -1,4 +1,9 @@
-<section class="main-section">
+<div *ngIf="!appState.isAuthUser || appState.hasError; else authTemplate ">
+  <router-outlet></router-outlet>
+</div>
+
+<ng-template #authTemplate >
+  <section class="main-section">
   <header class="main-header">
     <app-header></app-header>
   </header>
@@ -18,5 +23,5 @@
       </main>
     </div>
   </ng-template>
-
 </section>
+</ng-template>

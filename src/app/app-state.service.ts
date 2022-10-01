@@ -5,9 +5,9 @@ import { Injectable } from '@angular/core';
 })
 export class AppStateService {
   isViewPortLarge:boolean=true;
+  authUser='Alex';
+  isAuthUser=false;
+  hasError=false;
   constructor() { }
-
-  
-
 
 }
