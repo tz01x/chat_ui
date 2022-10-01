@@ -1,2 +1,38 @@
-<p>chat-view works! </p>
-<h1>{{username}}</h1>
+<section>
+  <nav class="nav">
+    <button mat-icon-button aria-label="go back button"> 
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="username-placeholder" data-active="true">
+        <span>{{username}}</span>
+    </div>
+    <button mat-icon-button >
+        <mat-icon>info</mat-icon>
+    </button>
+  </nav>
+  <main class="message-body">
+        <div class="message-list">
+            <div class="message-bubble" data-owner="true">
+                <p>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod, numquam eius, iure odio facilis nostrum est fugit cupiditate, accusantium porro aperiam omnis fuga laboriosam quam aut quo explicabo! Officiis, excepturi!
+                </p>
+                <span>time</span>
+            </div>
+            <div class="message-bubble" data-owner="false">
+                <p>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quod, numquam eius, iure odio facilis nostrum est fugit cupiditate, accusantium porro aperiam omnis fuga laboriosam quam aut quo explicabo! Officiis, excepturi!
+                </p>
+                <span>time</span>
+            </div>
+        </div>
+        <div class="input-section">
+            
+            <input type="text" class="input-field">
+        
+              <button mat-raised-button  color="primary" class="send-button">
+                <mat-icon>send</mat-icon>
+            </button>
+        </div>
+
+  </main>
+</section>

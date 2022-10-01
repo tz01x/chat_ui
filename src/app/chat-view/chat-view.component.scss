@@ -1,0 +1,53 @@
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: -2px 3px 4px 1px #dce4dc;
+    border-radius: 19px;
+
+}
+
+.username-placeholder{
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.username-placeholder::after{
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.username-placeholder[data-active="true"]::after{
+    background-color: #21d900;
+}
+
+.username-placeholder[data-active="false"]::after{
+    background-color: #3b3a3a;
+}
+
+.message-body{
+    display: flex;
+    flex-direction: column;
+}
+
+.message-list{
+    height: calc(100vh - 176px);
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.input-section{
+    display: flex;
+    gap: 10px;
+
+    .input-field{
+        width: 100%;
+    }
+
+    // .send-button{
+        
+    // }
+}
