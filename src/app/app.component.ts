@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import { AppStateService } from './app-state.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,10 @@ export class AppComponent {
     [Breakpoints.XLarge, 'XLarge']
   ]);
 
-  constructor(private breakpointObserver: BreakpointObserver,public appState:AppStateService){
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    public appState:AppStateService,
+    private router:Router){
     
     breakpointObserver
       .observe([
@@ -37,6 +41,25 @@ export class AppComponent {
             }
           }
         }
-      })
+      });
+
+    if(appState.loadUserInfo()){
+      this.router.navigate(['message']);
+    }else{
+      if(!window.location.pathname.match('login')){
+        this.router.navigate(['login']);
+      }
+    }
+
+    this.appState.isAuthUser.subscribe(isAuth=>{
+      if(!isAuth){
+        this.router.navigate(['login']);
+        this.appState.clearUserInfo();
+      }
+    })
+  }
+
+  logout(){
+    this.appState.isAuthUser.next(false);
   }
 }

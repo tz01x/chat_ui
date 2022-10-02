@@ -7,6 +7,8 @@ import {MatListModule} from '@angular/material/list'
 import { MatDividerModule } from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 @NgModule({
   declarations: [],
@@ -19,6 +21,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatDividerModule,
     MatInputModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatSidenavModule
   ]
 })
 export class MaterialModule { }

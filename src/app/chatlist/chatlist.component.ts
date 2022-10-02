@@ -33,6 +33,8 @@ export class ChatlistComponent implements OnInit {
   constructor(private _route:Router,public appState:AppStateService) { }
 
   ngOnInit(): void {
+ 
+    
   }
 
   message(uid:string){

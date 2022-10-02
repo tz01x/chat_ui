@@ -1,0 +1,36 @@
+.login-section{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 350px;
+    margin: auto;
+}
+
+.outer-border{
+    border-radius: 10px;
+    padding: 2em;
+    box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.353);
+}
+
+.loginBtn{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.loginBtn ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #ffffff;
+}
+
+.g-sign-in-btn{
+margin: 1em 0;
+}
+
+.g-sign-icon-wrapper{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 5px;
+}

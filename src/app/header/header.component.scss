@@ -1,3 +1,16 @@
 .example-spacer {
     flex: 1 1 auto;
 }
+
+.userphoto {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.name-and-image{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

@@ -1,27 +1,35 @@
-<div *ngIf="!appState.isAuthUser || appState.hasError; else authTemplate ">
-  <router-outlet></router-outlet>
-</div>
+<div *ngIf="appState.isAuthUser | async ; else unAuthTemplate ">
+  <mat-drawer-container class="drawer-container">
+    <mat-drawer [opened]="appState.appDrawer" class="drawer-sidenav" mode="over" (closed)="appState.drawerClose()">
+      <button mat-button (click)="logout()">
+        logout
+      </button>
+    </mat-drawer>
 
-<ng-template #authTemplate >
   <section class="main-section">
-  <header class="main-header">
-    <app-header></app-header>
-  </header>
-  <div *ngIf="appState.isViewPortLarge; else elseBlock" class="chat-body">
-    <aside>
-      <app-chatlist [renderInAside]="true"></app-chatlist>
-    </aside>
-    <main>
-      <router-outlet></router-outlet>
-    </main>
-  </div>
-
-  <ng-template #elseBlock>
-    <div class="chat-body">
+    <header class="main-header">
+      <app-header></app-header>
+    </header>
+    <div *ngIf="appState.isViewPortLarge; else elseBlock" class="chat-body">
+      <aside>
+        <app-chatlist [renderInAside]="true"></app-chatlist>
+      </aside>
       <main>
         <router-outlet></router-outlet>
       </main>
     </div>
-  </ng-template>
-</section>
+
+    <ng-template #elseBlock>
+      <div class="chat-body">
+        <main>
+          <router-outlet></router-outlet>
+        </main>
+      </div>
+    </ng-template>
+  </section>
+</mat-drawer-container>
+</div>
+
+<ng-template #unAuthTemplate>
+  <router-outlet></router-outlet>
 </ng-template>

@@ -10,6 +10,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { ChatBubbleComponent } from './chat-bubble/chat-bubble.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './auth/login/login.component';
+import { environment } from 'src/environments/environment';
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideAuth,getAuth } from '@angular/fire/auth';
 
 @NgModule({
   declarations: [
@@ -25,6 +29,10 @@ import { LoginComponent } from './auth/login/login.component';
     AppRoutingModule,
     MaterialModule,
     FormsModule,
+    ReactiveFormsModule,
+    provideFirebaseApp(() => initializeApp({ ...environment.firebase })),
+    provideFirestore(() => getFirestore()),
+    provideAuth(()=>getAuth()),
 
   ],
   providers: [],
