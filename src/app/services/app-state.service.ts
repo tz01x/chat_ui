@@ -1,20 +1,14 @@
 import { Injectable } from '@angular/core';
 import { UserCredential } from '@angular/fire/auth';
-import { BehaviorSubject, of, Subject, switchMap, timer } from 'rxjs';
-interface User{
-  email:string|null
-  displayName:string|null
-  photoURL:string|null
-  uid:string
-  refreshToken:string
-}
+import { BehaviorSubject, of, switchMap, timer } from 'rxjs';
+import { User } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppStateService {
   isViewPortLarge:boolean=true;
-  authUser='Alex';
+  userDocID:string|null=null;
   isAuthUser= new BehaviorSubject(false);
   hasError=false;
   user:User|null=null;
@@ -26,7 +20,6 @@ export class AppStateService {
 
     return timer(4000).pipe(switchMap(r=>{
       this.isAuthUser.next(true);
-      this.authUser=username;
       return of({
       'token':'token',
       'username':username,

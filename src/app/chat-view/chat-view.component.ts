@@ -51,7 +51,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked {
       if (this.textMessage && this.username) {
 
         this.chatService.pushMessage(
-          this.appState.authUser,
+          'abcd',
           this.username,
           this.textMessage
         );

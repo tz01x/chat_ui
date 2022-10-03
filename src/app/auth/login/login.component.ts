@@ -4,6 +4,7 @@ import { AppStateService } from '../../services/app-state.service';
 import { Auth, GoogleAuthProvider, signInWithPopup, UserCredential } from '@angular/fire/auth';
 import { distinctUntilChanged, filter, from } from 'rxjs';
 import { Router } from '@angular/router';
+import { StoreService } from '../../services/store.service';
 
 
 @Component({
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   title = "Login";
   loading = false;
+  
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', Validators.required),
@@ -22,7 +24,8 @@ export class LoginComponent implements OnInit {
   constructor(
     public appState: AppStateService,
     public auth: Auth,
-    private router: Router
+    private router: Router,
+    private db: StoreService
   ) { }
 
   ngOnInit(): void {
@@ -71,9 +74,23 @@ export class LoginComponent implements OnInit {
       photoURL,
       uid,
       refreshToken,
+      other: JSON.stringify(userCredential.user.toJSON())
+    })
+
+    from(this.db.addUser({
+      email,
+      displayName,
+      photoURL,
+      uid,
+      refreshToken,
+      other: JSON.stringify(userCredential.user.toJSON())
+    })).subscribe((res)=>{
+      console.log(res);
+      this.appState.userDocID = res;
     })
 
     this.router.navigate(['message']);
+    
 
 
   }
