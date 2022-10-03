@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, ROUTES } from '@angular/router'; // CLI imports router 
-import { AppStateService } from './app-state.service';
+import { AppStateService } from '../services/app-state.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/login/login.component';
 import { ChatViewComponent } from './chat-view/chat-view.component';
