@@ -1,7 +1,7 @@
 import { AfterViewChecked, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppStateService } from '../../services/app-state.service';
-import { ChatService } from '../../services/chat.service';
+import { AppStateService } from '../services/app-state.service';
+import { ChatService } from '../services/chat.service';
 
 @Component({
   selector: 'app-chat-view',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AppStateService } from '../../../services/app-state.service';
+import { AppStateService } from '../../services/app-state.service';
 import { Auth, GoogleAuthProvider, signInWithPopup, UserCredential } from '@angular/fire/auth';
 import { distinctUntilChanged, filter, from } from 'rxjs';
 import { Router } from '@angular/router';

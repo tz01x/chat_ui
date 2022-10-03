@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
-import { AppStateService } from '../services/app-state.service';
+import { AppStateService } from './services/app-state.service';
 import { Router } from '@angular/router';
 
 @Component({
