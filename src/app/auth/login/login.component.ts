@@ -59,7 +59,6 @@ export class LoginComponent implements OnInit {
   }
 
   getGoogleAuthUser(userCredential: UserCredential) {
-    debugger;
     const {
       email,
       displayName,
@@ -85,8 +84,7 @@ export class LoginComponent implements OnInit {
       refreshToken,
       other: JSON.stringify(userCredential.user.toJSON())
     })).subscribe((res)=>{
-      console.log(res);
-      this.appState.userDocID = res;
+      this.appState.setUserDocID(res);
     })
 
     this.router.navigate(['message']);

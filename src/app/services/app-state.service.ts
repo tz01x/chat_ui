@@ -43,6 +43,15 @@ export class AppStateService {
     localStorage.setItem('expiration',JSON.stringify(this.expiration?.toUTCString()));
   }
 
+  setUserDocID(id:string){
+    this.userDocID=id;
+    localStorage.setItem('docID',id);
+  }
+
+  loadUserDocID(){
+    this.userDocID = localStorage.getItem('docID');
+  }
+
   loadUserInfo(){
   
     const userInfo = localStorage.getItem('userinfo');
@@ -55,6 +64,7 @@ export class AppStateService {
     }
     if(this.user && this.expiration && this.expiration > new Date()){
       this.isAuthUser.next(true);
+      this.loadUserDocID();
       return true;
     }
     this.clearUserInfo();

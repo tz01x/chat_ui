@@ -6,3 +6,11 @@ export interface User{
     refreshToken:string,
     other:string
 }
+
+export interface AddUser{
+    displayName:string|null,
+    createdAt:string|number|null,
+    docId:string|null,
+    roomId:string|null,
+    updatedAt:string|null,
+}

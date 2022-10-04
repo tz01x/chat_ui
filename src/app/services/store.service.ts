@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { user } from '@angular/fire/auth';
-import { Firestore,collection,collectionData,addDoc,query, where, getDoc, getDocs } from '@angular/fire/firestore';
+import { Firestore,collection,collectionData,addDoc,query, where, getDoc, getDocs, orderBy } from '@angular/fire/firestore';
 import { from ,of,switchMap} from 'rxjs';
 import { User } from '../interfaces';
 @Injectable({
@@ -30,6 +30,14 @@ export class StoreService {
       return docRef.id;
     }
     return id;
+  }
+
+  getFriendsList(docID:string) {
+   const q= query(
+      collection(this.fireStore,`/add_user/${docID}/friends`),
+      orderBy('updatedAt','desc')
+    );
+    return getDocs(q);
   }
 
 }

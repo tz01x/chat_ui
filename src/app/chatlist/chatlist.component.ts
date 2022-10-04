@@ -1,6 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { from, map, Observable, of, switchMap } from 'rxjs';
+import { AddUser } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
+import { StoreService } from '../services/store.service';
 
 @Component({
   selector: 'app-chatlist',
@@ -29,12 +32,29 @@ export class ChatlistComponent implements OnInit {
     },
     
   ]
+  peoples$:Observable<AddUser[]>=of([]);
 
-  constructor(private _route:Router,public appState:AppStateService) { }
+  constructor(private _route:Router,
+    public appState:AppStateService,
+    private db:StoreService
+  ) { }
 
   ngOnInit(): void {
- 
-    
+
+    if(!this.renderInAside && this.appState.isViewPortLarge){
+      return;
+    }
+
+
+    if(this.appState.userDocID){
+      this.peoples$ = from(this.db.getFriendsList(this.appState.userDocID))
+      .pipe(map((result)=>{
+        return result.docs.map((doc)=>{
+          const data = doc.data() as AddUser;
+          return data;
+        })
+      }))
+    }
   }
 
   message(uid:string){
