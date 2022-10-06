@@ -5,8 +5,9 @@
     <mat-icon>menu</mat-icon>
 </button>
 <div class="name-and-image"> 
-   
-    <img class="userphoto" src="{{appState.user?.photoURL}}" alt="photo" srcset="">
+   <span *ngif="appState.user?.photoURL">
+       <img class="userphoto"  src="{{appState.user?.photoURL}}" alt="photo" srcset="">
+   </span>
     
     <span>{{appState.user?.displayName}}</span>
 </div>
