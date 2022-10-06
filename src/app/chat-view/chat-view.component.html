@@ -12,10 +12,10 @@
   </nav>
   <main class="chat-view-body">
         <div class="message-list" #scroll>
-            <app-chat-bubble  *ngFor="let msg of chatService.getMessage('abcd',username)"
-                [owner]="msg.username == 'abcd'" 
-                [timeStamp]="msg.timeStamp"
-                [textMessage]="msg.textMessage"
+            <app-chat-bubble  *ngFor="let msg of (messageList$ | async)"
+                [owner]="msg.from == appState.user?.displayName" 
+                [timeStamp]="1221"
+                [textMessage]="msg.message"
             ></app-chat-bubble>
 
         </div>

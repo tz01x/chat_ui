@@ -14,6 +14,8 @@ import { environment } from 'src/environments/environment';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideAuth,getAuth } from '@angular/fire/auth';
+import { HomeComponent } from './home/home.component';
+import { LoadingSpinerComponent } from './loading-spiner/loading-spiner.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +25,8 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
     HeaderComponent,
     ChatBubbleComponent,
     LoginComponent,
+    HomeComponent,
+    LoadingSpinerComponent,
   ],
   imports: [
     BrowserModule,

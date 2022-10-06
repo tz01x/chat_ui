@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserCredential } from '@angular/fire/auth';
-import { BehaviorSubject, of, switchMap, timer } from 'rxjs';
-import { User } from '../interfaces';
+import { BehaviorSubject, of, Subject, switchMap, timer } from 'rxjs';
+import { AddUser, User } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,8 @@ export class AppStateService {
   user:User|null=null;
   expiration:Date|null=null;
   appDrawer=false;
+  selectedPerson$ = new Subject<AddUser>()
+
   constructor() { }
 
   authenticateUser(username:string,password:string){
@@ -82,4 +84,9 @@ export class AppStateService {
   drawerClose(){
     this.appDrawer=false;
   }
+
+  errorHandler(error:any){
+    console.log(error);
+  }
+
 }

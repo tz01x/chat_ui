@@ -44,7 +44,7 @@ export class AppComponent {
       });
 
     if(appState.loadUserInfo()){
-      this.router.navigate(['message']);
+      this.router.navigate(['home']);
     }else{
       if(!window.location.pathname.match('login')){
         this.router.navigate(['login']);
@@ -59,7 +59,4 @@ export class AppComponent {
     })
   }
 
-  logout(){
-    this.appState.isAuthUser.next(false);
-  }
 }

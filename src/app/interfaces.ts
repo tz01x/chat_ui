@@ -14,3 +14,9 @@ export interface AddUser{
     roomId:string|null,
     updatedAt:string|null,
 }
+
+export interface Message{
+    from:string,
+    message:string,
+    createdAt:object|number|null
+}

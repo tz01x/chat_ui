@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { user } from '@angular/fire/auth';
-import { Firestore,collection,collectionData,addDoc,query, where, getDoc, getDocs, orderBy } from '@angular/fire/firestore';
-import { from ,of,switchMap} from 'rxjs';
-import { User } from '../interfaces';
+import { Firestore,collection,collectionData,addDoc,query, where, getDoc, getDocs, orderBy, doc, limit, serverTimestamp, onSnapshot } from '@angular/fire/firestore';
+import { from ,of,Observable, map} from 'rxjs';
+import { Message, User } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +22,57 @@ export class StoreService {
     }
     return null;
   }
+
+  async getUserWithDocId(docId:string){
+    const docRef = doc(this.fireStore,'user',docId);
+    const docSnp = await getDoc(docRef);
+    if(docSnp.exists()){
+      return docSnp.data() as User;
+    }
+    // todo: emit event to user not found.
+    throw Error('No User Found')
+  }
+
+  async getMessages(roomId:string,limitNumber:number=10){
+
+    const q = query(
+      collection(this.fireStore,'/message_room/rooms/'+roomId),
+      orderBy('createdAt','desc'),
+      limit(limitNumber)
+      )
+    return await getDocs(q);
+  }
+  
+  getMessageSnapShort(roomId:string,messageHandler:any) {
+    const q = query(
+      collection(this.fireStore,'/message_room/rooms/'+roomId),
+      orderBy('createdAt','desc')
+      )
+
+    return onSnapshot(q,{
+      next:(data)=>{
+        console.log(data)
+        messageHandler(
+
+          data.docs.map((doc)=>{
+            return doc.data() as Message
+          })
+        );
+      }
+    })
+    
+  }
+
+  sendMessage(message:object,roomId:string){
+     return addDoc(
+      collection(this.fireStore,'/message_room/rooms/'+roomId),
+      {
+        ...message,
+        createdAt:serverTimestamp(),
+      }
+    )
+  }
+
 
   async addUser(data:User){
     const id = await this.userExits(data);

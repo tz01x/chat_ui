@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
       this.appState.setUserDocID(res);
     })
 
-    this.router.navigate(['message']);
+    this.router.navigate(['home']);
     
 
 
