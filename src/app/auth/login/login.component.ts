@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.appState.showNonfiction('you are cool');
   }
 
   onSubmit() {
@@ -36,11 +37,12 @@ export class LoginComponent implements OnInit {
       const { username, password } = this.loginForm.value;
       if (username && password) {
         this.loading = true;
+        // todo: need to complect this implementation 
 
-        this.appState.authenticateUser(username, password).subscribe((result: any) => {
-          console.log(result);
-          this.loading = false;
-        })
+        // this.appState.authenticateUser(username, password).subscribe((result: any) => {
+        //   console.log(result);
+        //   this.loading = false;
+        // })
 
       }
     }

@@ -1,0 +1,29 @@
+
+.notification-container{
+    display: flex;
+    gap: 10px;
+}
+
+.bar{
+    width: 5px;
+    border-radius: 3px;
+}
+
+.success{
+    background-color: green;
+}
+
+.error{
+    background-color: red;
+}
+
+.message-container{
+    flex: 1;
+}
+
+.message{
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserCredential } from '@angular/fire/auth';
 import { BehaviorSubject, of, Subject, switchMap, timer } from 'rxjs';
 import { AddUser, User } from '../interfaces';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class AppStateService {
   appDrawer=false;
   selectedPerson$ = new Subject<AddUser>()
 
-  constructor() { }
+  constructor(private notificationService:NotificationService) { }
 
   authenticateUser(username:string,password:string){
 
@@ -85,8 +86,14 @@ export class AppStateService {
     this.appDrawer=false;
   }
 
-  errorHandler(error:any){
-    console.log(error);
+  showError(errorText:any){
+    this.notificationService.openSnackBar(errorText,'error')
   }
+
+  showNonfiction(text:any){
+    this.notificationService.openSnackBar(text,'success')
+  }
+
+  
 
 }

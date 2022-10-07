@@ -19,6 +19,7 @@ import { LoadingSpinerComponent } from './loading-spiner/loading-spiner.componen
 import { AddFriendsComponent } from './add-friends/add-friends.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ContentRefDirective } from './content-ref.directive';
+import { NotificationComponent } from './components/notification/notification.component';
 const config: SocketIoConfig = { url: 'http://localhost:8080/afterNet', options: {} };
 
 @NgModule({
@@ -33,6 +34,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/afterNet', options:
     LoadingSpinerComponent,
     AddFriendsComponent,
     ContentRefDirective,
+    NotificationComponent,
   ],
   imports: [
     BrowserModule,

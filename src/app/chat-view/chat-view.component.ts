@@ -58,7 +58,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
             this.otherPerson=value;
             this.loadMessage(this.roomId);
           },
-          error:this.appState.errorHandler
+          error:this.appState.showError
         })
 
       }

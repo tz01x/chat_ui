@@ -1,0 +1,14 @@
+<div class="notification-container">
+    <div class="bar {{data?.type}}"></div>
+    <div class="message-container">
+        <!-- <div class="title">
+            {{data?.title}}
+        </div> -->
+        <div class="message">
+            {{data?.message}}
+        </div>
+    </div>
+    <div class="btn-container">
+        <button mat-icon-button (click)="snackBarRef.dismiss()"><mat-icon>close</mat-icon></button>
+    </div>
+</div>
