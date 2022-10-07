@@ -16,6 +16,10 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HomeComponent } from './home/home.component';
 import { LoadingSpinerComponent } from './loading-spiner/loading-spiner.component';
+import { AddFriendsComponent } from './add-friends/add-friends.component';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { ContentRefDirective } from './content-ref.directive';
+const config: SocketIoConfig = { url: 'http://localhost:8080/afterNet', options: {} };
 
 @NgModule({
   declarations: [
@@ -27,6 +31,8 @@ import { LoadingSpinerComponent } from './loading-spiner/loading-spiner.componen
     LoginComponent,
     HomeComponent,
     LoadingSpinerComponent,
+    AddFriendsComponent,
+    ContentRefDirective,
   ],
   imports: [
     BrowserModule,

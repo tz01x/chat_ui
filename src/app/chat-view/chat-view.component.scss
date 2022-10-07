@@ -61,18 +61,13 @@
 
 .message-list{
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     // gap: 10px;
 }
 
-.message-list [ng-reflect-owner="true"]{
-    align-self: flex-end;
-}
-.message-list [ng-reflect-owner="false"]{
-    align-self: flex-start;
-}
-
-app-chat-bubble{
-    max-width: 60%;
-    min-width: 30%;
+.connectionStatus{
+    text-align: center;
+    background: #b30b0b;
+    color: white;
+    border-radius: 4px;
 }

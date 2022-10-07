@@ -6,6 +6,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { ChatViewComponent } from './chat-view/chat-view.component';
 import { ChatlistComponent } from './chatlist/chatlist.component';
 import { HomeComponent } from './home/home.component';
+import { AddFriendsComponent } from './add-friends/add-friends.component';
 
 
 const standAloneRoute: Routes = [
@@ -14,6 +15,7 @@ const standAloneRoute: Routes = [
     children:[
         { path: 'message', component: ChatlistComponent },
         { path: 'message/:docId/:roomId', component: ChatViewComponent },
+        { path: 'add-friends', component: AddFriendsComponent },
         {path:'',redirectTo:'/home/message',pathMatch:'full'},
     ]},
 

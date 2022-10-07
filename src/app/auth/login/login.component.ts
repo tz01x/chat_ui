@@ -75,7 +75,7 @@ export class LoginComponent implements OnInit {
       refreshToken,
       other: JSON.stringify(userCredential.user.toJSON())
     })
-
+    
     from(this.db.addUser({
       email,
       displayName,

@@ -37,7 +37,7 @@ export class StoreService {
 
     const q = query(
       collection(this.fireStore,'/message_room/rooms/'+roomId),
-      orderBy('createdAt','desc'),
+      orderBy('createdAt','asc'),
       limit(limitNumber)
       )
     return await getDocs(q);

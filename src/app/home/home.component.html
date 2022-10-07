@@ -1,8 +1,35 @@
 <mat-drawer-container class="drawer-container">
     <mat-drawer [opened]="appState.appDrawer" class="drawer-sidenav" mode="over" (closed)="appState.drawerClose()">
-        <button mat-button (click)="logout()">
-            logout
-        </button>
+
+        <div class="drawer-sidenav-header">
+            <div *ngIf="appState.user?.photoURL" class="userphoto">
+                <img [src]="appState.user?.photoURL" alt="user photo" srcset="">
+            </div>
+            <p>
+                {{appState.user?.displayName}}
+            </p>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="navs-buttons">
+            <a [routerLink]="['/home/add-friends']" class="addFirendsLink">
+                <button mat-flat-button >
+                    <div class="button-icon-container">
+                        <mat-icon>add</mat-icon>
+                        <div>
+                            Add Friends
+                        </div>
+                    </div>
+                </button>
+            </a>
+            <div class="logoutBtn-container">
+                <div class="button-icon-container">
+                    <button mat-button (click)="logout()"> 
+                        <mat-icon>exit_to_app</mat-icon>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
     </mat-drawer>
 
     <section class="main-section">

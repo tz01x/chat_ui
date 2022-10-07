@@ -5,17 +5,17 @@
     <mat-icon>menu</mat-icon>
 </button>
 <div class="name-and-image"> 
-   <span *ngif="appState.user?.photoURL">
-       <img class="userphoto"  src="{{appState.user?.photoURL}}" alt="photo" srcset="">
-   </span>
+       <!-- <img *ngIf="appState.user?.photoURL" class="userphoto"   src="{{appState.user?.photoURL}}" alt="photo" srcset=""> -->
     
-    <span>{{appState.user?.displayName}}</span>
+    <!-- <span>{{appState.user?.displayName}}</span> -->
+    <mat-icon>forum</mat-icon>
+    <span>AfterNet</span>
 </div>
 <span class="example-spacer"></span>
-<button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+<!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
     <mat-icon>favorite</mat-icon>
 </button>
 <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
     <mat-icon>share</mat-icon>
-</button>
+</button> -->
 </mat-toolbar>

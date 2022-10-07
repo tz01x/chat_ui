@@ -21,7 +21,7 @@
     }
     main{
       /* margin: 1em 1em 0 1em; */
-      padding: 1em 1em 0 1em;
+      padding: 0 1em 0 1em;
       overflow-y: scroll;
       width: 100%;
       height: 100%;
@@ -35,3 +35,59 @@
     background-color: white;
     width: 250px;
   }
+
+  .drawer-sidenav-header{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 2em 1.2em;
+    flex-direction: column;
+    justify-content: center;
+
+    .userphoto img{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+
+    p{
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+      text-align: center;
+    }
+  }
+
+  .navs-buttons{
+    margin-top: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .addFirendsLink{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .addFirendsLink button{
+    background: #512da8;
+    border-radius: 20px;
+    color: white;
+  }
+
+.button-icon-container{
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+
+.logoutBtn-container{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
