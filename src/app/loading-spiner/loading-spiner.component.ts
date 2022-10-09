@@ -1,4 +1,5 @@
 import { Component, OnInit,Input } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-loading-spiner',
@@ -7,7 +8,7 @@ import { Component, OnInit,Input } from '@angular/core';
 })
 export class LoadingSpinerComponent implements OnInit {
   @Input()diameter: string='100';
-  @Input()isLoading: boolean=true;
+  @Input()isLoading: Observable<boolean> = of(true);
   constructor() { }
 
   ngOnInit(): void {

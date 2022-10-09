@@ -1,15 +1,18 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { user } from '@angular/fire/auth';
 import { Firestore,collection,collectionData,addDoc,query, where, getDoc, getDocs, orderBy, doc, limit, serverTimestamp, onSnapshot } from '@angular/fire/firestore';
-import { from ,of,Observable, map} from 'rxjs';
-import { Message, User } from '../interfaces';
+
+import { from ,of,Observable, map, catchError, EMPTY,tap,share,throwError, first, retry} from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { AddedFriends, ApiResults, FriendsListItem, Message, User, UserListItem } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
 export class StoreService {
   userCollection:any = null; 
   
-  constructor(private fireStore:Firestore) { 
+  constructor(private fireStore:Firestore,private http:HttpClient) { 
     this.userCollection = collection(this.fireStore,'user');
   }
   
@@ -23,14 +26,10 @@ export class StoreService {
     return null;
   }
 
-  async getUserWithDocId(docId:string){
-    const docRef = doc(this.fireStore,'user',docId);
-    const docSnp = await getDoc(docRef);
-    if(docSnp.exists()){
-      return docSnp.data() as User;
-    }
-    // todo: emit event to user not found.
-    throw Error('No User Found')
+  getUserWithDocId(docId:string){
+    return this.http.get<User>(`${environment.api}/get-user/${docId}`).pipe(tap(val=>{
+      console.log(val);
+    }))
   }
 
   async getMessages(roomId:string,limitNumber:number=10){
@@ -74,21 +73,78 @@ export class StoreService {
   }
 
 
-  async addUser(data:User){
-    const id = await this.userExits(data);
-    if (id===null){
-      const docRef = await addDoc(this.userCollection,data);
-      return docRef.id;
-    }
-    return id;
+  addUser(data:User){
+    return this.http.post<User>(`${environment.api}/save-or-crate-user`,data);
   }
 
-  getFriendsList(docID:string) {
-   const q= query(
-      collection(this.fireStore,`/add_user/${docID}/friends`),
-      orderBy('updatedAt','desc')
-    );
-    return getDocs(q);
+  getFriendsList(uid:string) {
+   return this.http.get<AddedFriends[]>(`${environment.api}/get-add-friends/${uid}`)
+   .pipe(share());
   }
 
+  getUserList(uid:string|null,query:string,limit:number=100,offset:number=0){
+    if(!uid)
+      return of([])
+
+    return this.http.get<ApiResults<UserListItem>>
+      (`${environment.api}/get-users/${uid}?q=${query}&limit=${limit}&offset=${offset}`)
+      .pipe(map(data=>{
+        return data.results
+      }));
+  }
+
+  getAllFriends(uid:string|null,query:string,limit:number=100,offset:number=0){
+    if(!uid)
+      return of([])
+
+    return this.http.get<ApiResults<FriendsListItem>>
+      (`${environment.api}/get-all-friends/${uid}?q=${query}&limit=${limit}&offset=${offset}`)
+      .pipe(map(data=>{
+        return data.results
+      }));
+  }
+
+  getAllFriendRequest(uid:string|null,query:string,limit:number=100,offset:number=0){
+    if(!uid)
+      return of([])
+
+    return this.http.get<ApiResults<FriendsListItem>>
+      (`${environment.api}/get-all-friend-request/${uid}?q=${query}&limit=${limit}&offset=${offset}`)
+      .pipe(map(data=>{
+        return data.results
+      }));
+  }
+
+  addFriends(uidF:string,uidS:string){
+    return this.http.post(`${environment.api}/add-friends`,{
+      uid_first:uidF,
+      uid_second:uidS,
+    }).pipe(
+      retry(2),
+      tap((val)=>{
+      console.log(val);
+    }));
+  }
+
+  removeFriends(uidF:string,uidS:string){
+    return this.http.post(`${environment.api}/remove-friends`,{
+      uid_first:uidF,
+      uid_second:uidS,
+    }).pipe(
+      retry(2),
+      tap((val)=>{
+      console.log(val);
+    }));
+  }
+
+  acceptFriends(uidF:string,uidS:string){
+    return this.http.post(`${environment.api}/accept-friends`,{
+      uid_first:uidF,
+      uid_second:uidS,
+    }).pipe(
+      retry(2),
+      tap((val)=>{
+      console.log(val);
+    }));
+  }
 }

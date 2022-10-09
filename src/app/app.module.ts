@@ -20,7 +20,9 @@ import { AddFriendsComponent } from './add-friends/add-friends.component';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { ContentRefDirective } from './content-ref.directive';
 import { NotificationComponent } from './components/notification/notification.component';
-const config: SocketIoConfig = { url: 'http://localhost:8080/afterNet', options: {} };
+import { HttpClientModule } from '@angular/common/http';
+import { AddFriendsListItemComponent } from './components/add-friends-list-item/add-friends-list-item.component';
+import { AllFirendsComponent } from './all-firends/all-firends.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,10 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/afterNet', options:
     AddFriendsComponent,
     ContentRefDirective,
     NotificationComponent,
+    AddFriendsListItemComponent,
+    AllFirendsComponent,
+  
+    
   ],
   imports: [
     BrowserModule,
@@ -45,6 +51,7 @@ const config: SocketIoConfig = { url: 'http://localhost:8080/afterNet', options:
     provideFirebaseApp(() => initializeApp({ ...environment.firebase })),
     provideFirestore(() => getFirestore()),
     provideAuth(()=>getAuth()),
+    HttpClientModule,
 
   ],
   providers: [],

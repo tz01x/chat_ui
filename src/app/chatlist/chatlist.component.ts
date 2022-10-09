@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { from, map, Observable, of, switchMap } from 'rxjs';
-import { AddUser } from '../interfaces';
+import { from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { AddedFriends, AddUser } from '../interfaces';
 import { InteractiveLoading } from '../loading';
 import { AppStateService } from '../services/app-state.service';
 import { StoreService } from '../services/store.service';
@@ -14,8 +14,8 @@ import { StoreService } from '../services/store.service';
 export class ChatlistComponent implements OnInit {
   @Input() renderInAside = false;
 
-  peoples$:Observable<AddUser[]>=of([]);
-  loader!: InteractiveLoading;
+  peoples$:Observable<AddedFriends[]>=of([]);
+  loader = new InteractiveLoading();
 
   constructor(private _route:Router,
     public appState:AppStateService,
@@ -30,17 +30,12 @@ export class ChatlistComponent implements OnInit {
       return;
     }
     if(this.appState.userDocID){
-      this.loader = 
-      new InteractiveLoading(
-        from(this.db.getFriendsList(this.appState.userDocID))
-        .pipe(map((result)=>{
-          return result.docs.map((doc)=>{
-            const data = doc.data() as AddUser;
-            return data;
-          })
-        }))
-      );
-      this.peoples$ =  this.loader.obs$;
+      this.peoples$ =  this.loader.showLoaderUntilCompleted(
+        this.db.getFriendsList(this.appState.userDocID))
+        .pipe(tap((results)=>{
+          console.log(results);
+        }));
+      
 
     }
   }

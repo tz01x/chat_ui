@@ -1,0 +1,23 @@
+<div class="searchResult-item">
+    <div class="item-img">
+        <img [src]="user.photoURL" alt="{{user.displayName}} photo">
+    </div>
+    <div class="item-info">
+        <div>
+            <p>
+                {{user.displayName}}
+            </p>
+            <div *ngIf="!!user.acceptedStatus">
+            <mat-chip-list class="chip-list">
+                <mat-chip  color="primary" *ngIf="user.acceptedStatus==RequestAcceptedStatus.ACCEPTED">Accepted</mat-chip>
+                <mat-chip  *ngIf="user.acceptedStatus==RequestAcceptedStatus.PENDING">Padding</mat-chip>
+            </mat-chip-list>
+            </div>
+        </div>
+        <button [disabled]="user.added || disableAddBtn" mat-raised-button [ngClass]="btnClass"  class="item-btn"
+            (click)="buttonClickHandler()">
+            <div>{{buttonText}}</div>
+        </button>
+    </div>
+
+</div>

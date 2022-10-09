@@ -44,7 +44,7 @@ export class AppComponent {
       });
 
     if(appState.loadUserInfo()){
-      this.router.navigate(['home']);
+      // this.router.navigate(['home']);
     }else{
       if(!window.location.pathname.match('login')){
         this.router.navigate(['login']);

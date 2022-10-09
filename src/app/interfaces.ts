@@ -3,8 +3,26 @@ export interface User{
     displayName:string|null
     photoURL:string|null
     uid:string
-    refreshToken:string,
-    other:string
+    accessToken:string|null
+    refreshToken:string|null
+    other:string|null
+}
+
+export interface UserListItem{
+    displayName:string
+    photoURL:string|null
+    uid:string
+    added:boolean
+}
+
+export interface FriendsListItem{
+    displayName:string
+    photoURL:string|null
+    uid:string
+    acceptedStatus:string|undefined|null
+    roomId:string
+    updatedAt:string
+
 }
 
 export interface AddUser{
@@ -19,4 +37,27 @@ export interface Message{
     from:string,
     message:string,
     createdAt:object|number|null
+}
+
+export interface AddedFriends{
+    displayName:string
+    uid:string
+    roomId:string
+    acceptedStatus:string
+    updatedAt:string
+}
+
+export interface ApiResults<T>{
+    count:number,
+    next:string|null,
+    previous:string|null,
+    results:T[]
+}
+
+export enum RequestAcceptedStatus{
+    PENDING = 1,
+    ACCEPTED = 2,
+    REJECTED = 3,
+    CANCELED = 4,
+
 }

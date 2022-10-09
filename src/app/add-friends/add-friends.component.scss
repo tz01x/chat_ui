@@ -2,5 +2,12 @@
 .search-field{
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+
+.searchResultes ::ng-deep .abcd:not([class*=mat-button-disabled]) {
+    background-color: #9c27b0;
+    color: white;
 }

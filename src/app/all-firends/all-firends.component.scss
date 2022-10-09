@@ -1,0 +1,9 @@
+.searchResultes ::ng-deep .abcd:not([class*=mat-button-disabled]) {
+    background-color: #b02e27;
+    color: white;
+}
+.search-field{
+    display: flex;
+   justify-content: flex-end;
+   margin-top: 16px;
+}

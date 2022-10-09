@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppStateService } from '../../services/app-state.service';
 import { Auth, GoogleAuthProvider, signInWithPopup, UserCredential } from '@angular/fire/auth';
-import { distinctUntilChanged, filter, from } from 'rxjs';
+import { concatMap, distinctUntilChanged, filter, from, of, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
+import { User } from 'src/app/interfaces';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { StoreService } from '../../services/store.service';
 export class LoginComponent implements OnInit {
   title = "Login";
   loading = false;
-  
+
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
     password: new FormControl('', Validators.required),
@@ -29,7 +30,6 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.appState.showNonfiction('you are cool');
   }
 
   onSubmit() {
@@ -38,11 +38,6 @@ export class LoginComponent implements OnInit {
       if (username && password) {
         this.loading = true;
         // todo: need to complect this implementation 
-
-        // this.appState.authenticateUser(username, password).subscribe((result: any) => {
-        //   console.log(result);
-        //   this.loading = false;
-        // })
 
       }
     }
@@ -69,30 +64,43 @@ export class LoginComponent implements OnInit {
       refreshToken,
     } = userCredential.user;
 
-    this.appState.setUser({
-      email,
-      displayName,
-      photoURL,
-      uid,
-      refreshToken,
-      other: JSON.stringify(userCredential.user.toJSON())
-    })
-    
-    from(this.db.addUser({
-      email,
-      displayName,
-      photoURL,
-      uid,
-      refreshToken,
-      other: JSON.stringify(userCredential.user.toJSON())
-    })).subscribe((res)=>{
-      this.appState.setUserDocID(res);
-    })
-
-    this.router.navigate(['home']);
-    
 
 
+    from(userCredential.user.getIdToken())
+      .pipe(switchMap((accessToken) => {
+        return this.addUserToDB({
+          email,
+          displayName,
+          photoURL,
+          uid,
+          refreshToken,
+          'accessToken': accessToken,
+          other: JSON.stringify(userCredential.user.toJSON())
+        })
+      })).subscribe({
+        next: (res) => {
+          const userRes = res as User;
+          this.appState.setUserDocID(userRes.uid);
+        },
+        error:(err)=>{
+          const {status} = err;
+          if(status != undefined  && status==0){
+            this.appState.showError('Connection Error');
+          }else{
+            this.appState.showError('Error Occurs');
+          }
+        },
+        complete:()=>{
+          this.router.navigate(['home']);
+        }
+      });
+
+
+  }
+
+  addUserToDB(user: User) {
+    this.appState.setUser(user);
+    return this.db.addUser(user);
   }
 
   invalidGoogleLogin(error: any) {

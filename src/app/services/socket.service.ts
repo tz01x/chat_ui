@@ -1,11 +1,13 @@
 
 import { Socket } from 'ngx-socket-io';
+import { environment } from 'src/environments/environment';
 
 
 export class SocketService {
   public socketStatus = true;
   constructor(private socket: Socket) { 
     this.checkStatus();
+   
   }
 
   checkStatus() {
@@ -16,6 +18,7 @@ export class SocketService {
       this.socketStatus = false;
     });
   }
+
   setRoom(roomId:string){
     
     this.socket.emit('setRoom',{roomId:roomId});
@@ -27,7 +30,6 @@ export class SocketService {
     // this.socket.fromEvent('receiveMessage').subscribe((value:any)=>{
     //   console.log(value);
     // })
-
     return this.socket.fromEvent('receiveMessage');
   }
   close(){
@@ -35,3 +37,6 @@ export class SocketService {
   }
 }
 
+export const socketFactory= ()=>{
+  return new SocketService(new Socket({ url: environment.chatSocketUrl, options: {} }))
+}

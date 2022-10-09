@@ -4,7 +4,7 @@ import { of, from, map, Observable } from 'rxjs';
 import { AddUser, Message, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
-import { SocketService } from '../services/socket.service';
+import { socketFactory,SocketService } from '../services/socket.service';
 import { StoreService } from '../services/store.service';
 import { Socket } from 'ngx-socket-io';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
@@ -15,14 +15,6 @@ import { environment } from 'src/environments/environment';
   selector: 'app-chat-view',
   templateUrl: './chat-view.component.html',
   styleUrls: ['./chat-view.component.scss'],
-  providers:[
-    {
-      provide:SocketService,
-      useFactory:()=>{
-        return new SocketService(new Socket({ url: environment.chatSocketUrl, options: {} }))
-      }
-    }
-  ]
 })
 export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
   docId: string | null = null;
@@ -30,7 +22,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
   textMessage:string|null = null;
   messageList$:Observable<Message[]>=of([]);
   otherPerson: User | null = null;
-  
+  chatSocket:SocketService|undefined;
 
   @ViewChild('scroll', { static: true }) scroll: any;
   @ViewChild(ContentRefDirective,{static:true}) messageListViewChildRef!: ContentRefDirective;
@@ -42,23 +34,28 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
     public chatService: ChatService,
     public appState: AppStateService,
     private db:StoreService,
-    public chatSocket:SocketService,
+    
   ) {
-
+    
     this._Activatedroute.paramMap.subscribe(params => {
+
+
+      this.chatSocket = this.constructSocket();
       this.docId = params.get('docId');
       this.roomId = params.get('roomId');
       if(this.docId && this.roomId){
-        chatSocket.setRoom(this.roomId);
-        this.loadMessageFromObservable(chatSocket.getMessages())
+        this.messageListViewChildRef?.viewContainerRef.clear();
+        this.chatSocket?.setRoom(this.roomId);
+        const tmp =  this.chatSocket?.getMessages();
+        tmp&&this.loadMessageFromObservable(tmp);
 
-        from(db.getUserWithDocId(this.docId))
+        db.getUserWithDocId(this.docId)
         .subscribe({
           next:(value)=>{
             this.otherPerson=value;
-            this.loadMessage(this.roomId);
+            // this.loadMessage(this.roomId);
           },
-          error:this.appState.showError
+          error:(error)=>this.appState.showError(JSON.stringify(error))
         })
 
       }
@@ -71,7 +68,14 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
     // console.log(this.chatService.getMessage('tumzied',this.username||'abc'))
   }
 
-
+  constructSocket(){
+    if(this.chatSocket){
+      this.chatSocket?.close();
+      return socketFactory();
+    }else{
+      return socketFactory();
+    }
+  }
 
   ngAfterViewChecked() {
     
@@ -90,7 +94,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
       return;
 
     if (code == 'Enter' || type == 'click') {
-      this.chatSocket.sendMessage({
+      this.chatSocket?.sendMessage({
         from:this.appState.user?.displayName,
         message:this.textMessage,
       })
@@ -144,7 +148,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
 
   ngOnDestroy(): void {
     console.log('destroying chatview')
-    this.chatSocket.close();
+    this.chatSocket?.close();
   }
 
 }
