@@ -61,3 +61,8 @@ export enum RequestAcceptedStatus{
     CANCELED = 4,
 
 }
+
+export enum ReloadStatus{
+    CHAT_LIST = 1,
+    CHAT_DETAIL = 2,
+}

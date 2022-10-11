@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { from, map, Observable, of, switchMap, tap } from 'rxjs';
-import { AddedFriends, AddUser } from '../interfaces';
+import { filter, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { AddedFriends, AddUser, ReloadStatus } from '../interfaces';
 import { InteractiveLoading } from '../loading';
 import { AppStateService } from '../services/app-state.service';
 import { StoreService } from '../services/store.service';
@@ -30,18 +30,24 @@ export class ChatlistComponent implements OnInit {
       return;
     }
     if(this.appState.userDocID){
-      this.peoples$ =  this.loader.showLoaderUntilCompleted(
-        this.db.getFriendsList(this.appState.userDocID))
-        .pipe(tap((results)=>{
-          console.log(results);
-        }));
-      
+
+      this.peoples$ = this.appState.reloadRequired$
+      .pipe(
+        filter(val=> val===null || val===ReloadStatus.CHAT_LIST),
+        switchMap((_)=>{
+          if(this.appState.userDocID)
+            return this.loader.showLoaderUntilCompleted(
+              this.db.getFriendsList(this.appState.userDocID)
+            );
+          return of([])
+        })
+      )
+       
 
     }
   }
 
   message(uid:string){
-    console.log(uid);
     this._route.navigate(['message',uid]);
   }
 

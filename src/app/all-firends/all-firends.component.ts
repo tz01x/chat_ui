@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap, BehaviorSubject } from 'rxjs';
 import { StoreService } from '../services/store.service';
-import { FriendsListItem, User, UserListItem } from '../interfaces';
+import { FriendsListItem, ReloadStatus, User, UserListItem } from '../interfaces';
 
 @Component({
   selector: 'app-all-firends',
@@ -79,7 +79,8 @@ export class AllFirendsComponent implements OnInit {
   }
 
   onNextAcceptAction(user: FriendsListItem, value: any) {
-    this.appState.showNonfiction('Request Accepted')
+    this.appState.showNonfiction('Request Accepted');
+    this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
   }
   onErrorAcceptAction(user: FriendsListItem, error: any) {
     console.error(error);

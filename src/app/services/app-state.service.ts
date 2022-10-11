@@ -15,7 +15,7 @@ export class AppStateService {
   user:User|null=null;
   expiration:Date|null=null;
   appDrawer=false;
-  selectedPerson$ = new Subject<AddUser>()
+  reloadRequired$ = new BehaviorSubject<number|null>(null);
 
   constructor(private notificationService:NotificationService) { }
 
