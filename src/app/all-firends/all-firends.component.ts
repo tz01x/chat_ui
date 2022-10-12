@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
@@ -9,7 +9,8 @@ import { FriendsListItem, ReloadStatus, User, UserListItem } from '../interfaces
 @Component({
   selector: 'app-all-firends',
   templateUrl: './all-firends.component.html',
-  styleUrls: ['./all-firends.component.scss']
+  styleUrls: ['./all-firends.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush,
 })
 export class AllFirendsComponent implements OnInit {
 
@@ -36,14 +37,14 @@ export class AllFirendsComponent implements OnInit {
   }
 
   valueChangeHandler() {
-    this.searchFormControl.valueChanges
+    this.allFriendsList$ = this.searchFormControl.valueChanges
       .pipe(
         debounceTime(500),
         switchMap((value: string) => {
-          this.allFriendsList$ = this.db.getAllFriends(this.appState.userDocID, value);
-          return this.allFriendsList$;
+         return this.db.getAllFriends(this.appState.userDocID, value);
+          
         })
-      ).subscribe()
+      )
 
 
   }
