@@ -1,4 +1,4 @@
-<section class="chat-view-section">
+<section [ngClass]="{'chat-view-section':true,darkMode:appState.darkMode}">
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
         Can not connect to server
     </div>

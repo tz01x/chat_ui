@@ -2,32 +2,36 @@
 .list-items{
     width: 100%;
     padding: 0;
+}
 
- 
+.list-item{
+    list-style: none;
+}
 
-    .list-item{
-        list-style: none;
-    }
+.list-item-link{
+   
+    text-decoration: none;
+}
 
+.darkMode{
     .list-item-link{
-        color: black;
-        text-decoration: none;
+        color: white;
     }
+}
 
-    .list-item-box{
+.list-item-box{
+    width: 100%;
+    height: inherit;
+    display: flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    .mat-button-wrapper{
         width: 100%;
-        height: inherit;
-        display: flex;
-        align-items: center;
-        padding: 0.5em 1em;
-        .mat-button-wrapper{
-            width: 100%;
-        }
     }
+}
 
-    .list-item-active .list-item-box{
-        background-color: rgba(168, 189, 170, 0.407);
-    }
+.list-item-active .list-item-box{
+    background-color: rgba(168, 189, 170, 0.407);
 }
 
 .image-container{

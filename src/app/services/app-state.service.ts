@@ -8,6 +8,7 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class AppStateService {
+  darkMode:boolean=false;
   isViewPortLarge:boolean=true;
   userDocID:string|null=null;
   isAuthUser= new BehaviorSubject(false);
@@ -92,6 +93,9 @@ export class AppStateService {
 
   showNonfiction(text:any){
     this.notificationService.openSnackBar(text,'success')
+  }
+  toggleDarkMode(){
+    this.darkMode=!this.darkMode
   }
 
   

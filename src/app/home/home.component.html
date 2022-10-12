@@ -11,17 +11,27 @@
         </div>
         <mat-divider></mat-divider>
         <div class="navs-buttons">
-            <a [routerLink]="['/home/add-friends']" class="addFirendsLink">
+            <div [routerLink]="['/home']" class="addFirendsLink">
+                <button mat-flat-button >
+                    <div class="button-icon-container">
+                        <mat-icon>chat</mat-icon>
+                        <div>
+                            Messages
+                        </div>
+                    </div>
+                </button>
+            </div>
+            <div [routerLink]="['/home/add-friends']" class="addFirendsLink">
                 <button mat-flat-button >
                     <div class="button-icon-container">
                         <mat-icon>add</mat-icon>
                         <div>
-                            Add Friends
+                           Add Friends
                         </div>
                     </div>
                 </button>
-            </a>
-            <a [routerLink]="['/home/all-friends']" class="addFirendsLink">
+            </div>
+            <div [routerLink]="['/home/all-friends']" class="addFirendsLink">
                 <button mat-flat-button >
                     <div class="button-icon-container">
                         <mat-icon>supervisor_account</mat-icon>
@@ -30,7 +40,7 @@
                         </div>
                     </div>
                 </button>
-            </a>
+            </div>
             <div class="logoutBtn-container">
                 <div class="button-icon-container">
                     <button mat-button (click)="logout()"> 

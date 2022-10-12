@@ -8,10 +8,10 @@
     align-items: center;
     box-shadow: -2px 3px 4px 1px #dce4dc;
     border-radius: 19px;
-    // position: absolute;
-    // width: 100p;
-    // background-color: white;
+}
 
+.darkMode .nav{
+    box-shadow: -2px 3px 4px 1px #00000099;
 }
 
 .username-placeholder{
@@ -49,14 +49,24 @@
 .input-section{
     display: flex;
     gap: 10px;
-
+    margin-top: 5px;
     .input-field{
         width: 100%;
-    }
+        background-color: inherit;
+        color: inherit;
+        border: 2px solid rgb(62, 61, 61);
 
-    // .send-button{
-        
-    // }
+    }
+}
+
+.darkMode .input-field{
+    border: 1px solid white;
+}
+
+.darkMode .input-field:focus-visible{
+    background-color: inherit;
+    color: inherit;
+    outline: 3px auto white;
 }
 
 .message-list{

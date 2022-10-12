@@ -10,12 +10,12 @@
       <li
       class="list-item"
       *ngFor="let folder of peoples$ | async; last as last">
-      <a  [routerLink]="['/home/message',folder.uid,folder.roomId]"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
+      <div  [routerLink]="['/home/message',folder.uid,folder.roomId]"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
          <button mat-button class="list-item-box">
             <mat-icon mat-list-icon>account_circle</mat-icon>
             {{folder.displayName}}
          </button>
-      </a>
+      </div>
       </li>
   </ul>
 </ng-template>
