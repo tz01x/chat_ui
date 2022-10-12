@@ -32,14 +32,8 @@ export class StoreService {
     }))
   }
 
-  async getMessages(roomId:string,limitNumber:number=10){
-
-    const q = query(
-      collection(this.fireStore,'/message_room/rooms/'+roomId),
-      orderBy('createdAt','asc'),
-      limit(limitNumber)
-      )
-    return await getDocs(q);
+  getMessages(roomId:string,limitNumber:number=10,offset=0){
+    return this.http.get<ApiResults<Message>>(`${environment.api}/get-messages/${roomId}?limit=${limitNumber}&offset=${offset}`)
   }
   
   getMessageSnapShort(roomId:string,messageHandler:any) {

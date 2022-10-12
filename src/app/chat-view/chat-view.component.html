@@ -16,9 +16,9 @@
   <main class="chat-view-body">
         <div class="message-list"  #scroll>
             <app-chat-bubble  *ngFor="let msg of (messageList$ | async)"
-            [owner]="msg.from == appState.user?.displayName" 
+            [owner]="msg.from_uid == appState.user?.uid" 
             [timeStamp]="1221"
-            [textMessage]="msg.message"
+            [textMessage]="msg.content"
             ></app-chat-bubble>
             <ng-template appContentRef></ng-template>
 
