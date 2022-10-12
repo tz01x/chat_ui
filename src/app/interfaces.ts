@@ -34,9 +34,10 @@ export interface AddUser{
 }
 
 export interface Message{
-    from:string,
-    message:string,
+    from_uid:string
+    content:string
     createdAt:object|number|null
+    roomId:string
 }
 
 export interface AddedFriends{
