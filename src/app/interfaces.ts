@@ -26,11 +26,11 @@ export interface FriendsListItem{
 }
 
 export interface AddUser{
-    displayName:string|null,
-    createdAt:string|number|null,
-    docId:string|null,
-    roomId:string|null,
-    updatedAt:string|null,
+    displayName:string|null
+    createdAt:string|number|null
+    docId:string|null
+    roomId:string|null
+    updatedAt:string|null
 }
 
 export interface Message{
@@ -50,8 +50,8 @@ export interface AddedFriends{
 
 export interface ApiResults<T>{
     count:number,
-    next:string|null,
-    previous:string|null,
+    next:string|null
+    previous:string|null
     results:T[]
 }
 
