@@ -1,12 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap,BehaviorSubject} from 'rxjs';
 import { StoreService } from '../services/store.service';
 import { User, UserListItem } from '../interfaces';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDividerModule } from '@angular/material/divider';
+import { AddFriendsListItemComponent } from '../components/add-friends-list-item/add-friends-list-item.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
+  standalone:true,
+  imports:[
+    CommonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatDividerModule,
+    AddFriendsListItemComponent,
+
+  ],
   selector: 'app-add-friends',
   templateUrl: './add-friends.component.html',
   styleUrls: ['./add-friends.component.scss']

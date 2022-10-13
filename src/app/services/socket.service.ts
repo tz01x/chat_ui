@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 
 export class SocketService {
   public socketStatus = true;
+  roomId!: string;
   constructor(private socket: Socket) { 
     this.checkStatus();
    
@@ -13,6 +14,7 @@ export class SocketService {
   checkStatus() {
     this.socket.on("connect", () => {
       this.socketStatus = true;
+      this.roomId&&this.setRoom(this.roomId);
     });
     this.socket.on("disconnect", () => {
       this.socketStatus = false;
@@ -20,7 +22,7 @@ export class SocketService {
   }
 
   setRoom(roomId:string){
-    
+    this.roomId= roomId;
     this.socket.emit('setRoom',{roomId:roomId});
   }
   sendMessage(data:any){

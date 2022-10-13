@@ -10,8 +10,20 @@ import { Socket } from 'ngx-socket-io';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 import { ContentRefDirective } from '../content-ref.directive';
 import { environment } from 'src/environments/environment';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 @Component({
+  standalone:true,
+  imports:[
+    CommonModule,
+    ChatBubbleComponent,
+    MatIconModule,
+    MatButtonModule,
+    FormsModule,
+  ],
   selector: 'app-chat-view',
   templateUrl: './chat-view.component.html',
   styleUrls: ['./chat-view.component.scss'],

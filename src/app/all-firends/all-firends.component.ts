@@ -1,12 +1,31 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap, BehaviorSubject } from 'rxjs';
 import { StoreService } from '../services/store.service';
 import { FriendsListItem, ReloadStatus, User, UserListItem } from '../interfaces';
+import { CommonModule } from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { AddFriendsListItemComponent } from '../components/add-friends-list-item/add-friends-list-item.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
+  standalone:true,
+  imports:[
+    CommonModule,
+    MatButtonModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatDividerModule,
+    MatTabsModule,
+    AddFriendsListItemComponent,
+    
+  ],
   selector: 'app-all-firends',
   templateUrl: './all-firends.component.html',
   styleUrls: ['./all-firends.component.scss'],

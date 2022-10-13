@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, ROUTES } from '@angular/router'; // CLI imports router 
-import { AppStateService } from './services/app-state.service';
-import { AppComponent } from './app.component';
-import { LoginComponent } from './auth/login/login.component';
 import { ChatViewComponent } from './chat-view/chat-view.component';
 import { ChatlistComponent } from './chatlist/chatlist.component';
 import { HomeComponent } from './home/home.component';
@@ -11,15 +8,15 @@ import { AllFirendsComponent } from './all-firends/all-firends.component';
 
 
 const standAloneRoute: Routes = [
-    {path: 'login',component: LoginComponent},
-    {path: 'home', component: HomeComponent,
-    children:[
-        { path: 'message', component: ChatlistComponent },
-        { path: 'message/:docId/:roomId', component: ChatViewComponent },
-        { path: 'add-friends', component: AddFriendsComponent },
-        { path: 'all-friends', component: AllFirendsComponent },
-        {path:'',redirectTo:'/home/message',pathMatch:'full'},
-    ]},
+    {
+        path: 'login',
+        loadChildren: () => import('./auth/login/login.module').then(m => m.LoginModule)
+    },
+    {
+        path:'home',
+        loadChildren:()=>import('./home/home.routes').then(m=>m.HomeRoutes)
+    }
+    ,
 
     { path: '', redirectTo: '/login', pathMatch: 'full' },
 
