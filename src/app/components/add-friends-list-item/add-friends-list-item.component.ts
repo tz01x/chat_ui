@@ -3,7 +3,16 @@ import { RequestAcceptedStatus } from '../../interfaces';
 import { AppStateService } from '../../services/app-state.service';
 import { StoreService } from '../../services/store.service';
 import {Subject, first, Observable} from 'rxjs'
+import { CommonModule } from '@angular/common';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
+  standalone:true,
+  imports:[
+    CommonModule,
+    MatChipsModule,
+    MatButtonModule,
+  ],
   selector: 'app-add-friends-list-item',
   templateUrl: './add-friends-list-item.component.html',
   styleUrls: ['./add-friends-list-item.component.scss']

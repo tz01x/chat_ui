@@ -1,7 +1,16 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit,Inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarRef, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 
 @Component({
+  standalone:true,
+  imports:[
+    CommonModule,
+     MatIconModule,
+    MatButtonModule,
+  ],
   selector: 'app-notification',
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.scss']
