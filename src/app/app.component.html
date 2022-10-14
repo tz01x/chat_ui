@@ -1,4 +1,4 @@
-<div [ngClass]="{darkMode:appState.darkMode}">
+<div [ngClass]="{darkMode:appState.darkMode$|async}">
     <router-outlet></router-outlet>
 
 </div>

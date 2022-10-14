@@ -8,7 +8,8 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class AppStateService {
-  darkMode:boolean=false;
+  private darkModeSubject = new BehaviorSubject<boolean>(false);
+  darkMode$ = this.darkModeSubject.asObservable();
   isViewPortLarge:boolean=true;
   userDocID:string|null=null;
   isAuthUser= new BehaviorSubject(false);
@@ -95,7 +96,8 @@ export class AppStateService {
     this.notificationService.openSnackBar(text,'success')
   }
   toggleDarkMode(){
-    this.darkMode=!this.darkMode
+
+    this.darkModeSubject.next(!this.darkModeSubject.getValue())
   }
 
   

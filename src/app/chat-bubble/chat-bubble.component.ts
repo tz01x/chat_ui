@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { AppStateService } from '../services/app-state.service';
 
 @Component({
   standalone:true,
@@ -16,7 +17,7 @@ export class ChatBubbleComponent implements OnInit {
   @Input()textMessage:string|undefined;
   @Input()timeStamp:string|number|undefined;
   
-  constructor() { }
+  constructor(public appState:AppStateService) { }
 
   ngOnInit(): void {
   }

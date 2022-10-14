@@ -1,4 +1,4 @@
-<div class="chat-bubble" [attr.data-owner]="owner">
+<div [ngClass]="{'chat-bubble':true,darkMode:(this.appState.darkMode$|async)}" [attr.data-owner]="owner">
     <p>
         {{textMessage}}
     </p>

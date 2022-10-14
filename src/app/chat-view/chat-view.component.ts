@@ -88,7 +88,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
 
   constructSocket(){
     if(this.chatSocket){
-      this.chatSocket?.close();
+      this.chatSocket.close();
       return socketFactory();
     }else{
       return socketFactory();
@@ -111,7 +111,7 @@ export class ChatViewComponent implements OnInit, AfterViewChecked,OnDestroy {
     if(!this.roomId)
       return;
 
-    if (code == 'Enter' || type == 'click') {
+    if ((code == 'Enter' || type == 'click') && this.textMessage) {
       this.chatSocket?.sendMessage({
         from_uid:this.appState.user?.uid,
         content:this.textMessage,

@@ -17,8 +17,8 @@
 </button> -->
 <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
     
-        <mat-icon *ngIf="appState.darkMode" (click)="appState.toggleDarkMode()">brightness_4</mat-icon>
-        <mat-icon *ngIf="!appState.darkMode" (click)="appState.toggleDarkMode()">brightness_7</mat-icon>
+        <mat-icon *ngIf="appState.darkMode$|async" (click)="appState.toggleDarkMode()">brightness_4</mat-icon>
+        <mat-icon *ngIf="!(appState.darkMode$|async)" (click)="appState.toggleDarkMode()">brightness_7</mat-icon>
    
 </button> 
 </mat-toolbar>
