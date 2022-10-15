@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap,BehaviorSubject} from 'rxjs';
 import { StoreService } from '../services/store.service';
-import { User, UserListItem } from '../interfaces';
+import { ReloadStatus, User, UserListItem } from '../interfaces';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -73,6 +73,7 @@ export class AddFriendsComponent implements OnInit {
 
   onComplectAction(user:UserListItem){
     this.appState.showNonfiction('Request send to '+user.displayName);
+    this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
   }
 
   onErrorAction(user:UserListItem,error:any){

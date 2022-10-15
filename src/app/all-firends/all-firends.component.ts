@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
-import { debounceTime, of, switchMap, BehaviorSubject } from 'rxjs';
+import { debounceTime, of, switchMap, BehaviorSubject, filter } from 'rxjs';
 import { StoreService } from '../services/store.service';
 import { FriendsListItem, ReloadStatus, User, UserListItem } from '../interfaces';
 import { CommonModule } from '@angular/common';
@@ -51,7 +51,14 @@ export class AllFirendsComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueChangeHandler();
-    this.allFriendsList$ = this.db.getAllFriends(this.appState.userDocID, '');
+    this.allFriendsList$ = this.appState.reloadRequired$
+    .pipe(
+      filter(value=>value==ReloadStatus.CHAT_LIST||value===null),
+      switchMap(value=>{
+        return this.db.getAllFriends(this.appState.userDocID, '');
+      })
+    ) ;
+
     this.requestedFriends$ = this.db.getAllFriendRequest(this.appState.userDocID,'');
   }
 
@@ -80,7 +87,8 @@ export class AllFirendsComponent implements OnInit {
   }
 
   onComplectAction(user: FriendsListItem) {
-    this.appState.showNonfiction('Request send to ' + user.displayName);
+    this.appState.showNonfiction(user.displayName+' was remove from you friends list');
+    this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
   }
 
   onErrorAction(user: FriendsListItem, error: any) {
