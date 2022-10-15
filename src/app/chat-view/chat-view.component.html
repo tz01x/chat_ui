@@ -13,16 +13,23 @@
         <mat-icon>info</mat-icon>
     </button>
   </nav>
-  <main class="chat-view-body">
-        <div class="message-list"  #scroll>
-            <app-chat-bubble  *ngFor="let msg of (messageList$ | async)"
+  <main class="chat-view-body"  >
+        <div 
+        class="message-list"
+        appInfiniteScroll
+        (scrollingUp)="onScrollUp()"
+        [restThrottleDistancePointObservable]="restDistancePointer"
+        [throttleDistance]="200"
+        #scroll 
+        >
+            <app-chat-bubble   #messages *ngFor="let msg of (messageList$ | async); let last = last;"
             [owner]="msg.from_uid == appState.user?.uid" 
             [timeStamp]="1221"
             [textMessage]="msg.content"
+            [isLast]="last"
+            (lastComponentViewRender)="lastComponentViewRender()"
             ></app-chat-bubble>
-            <ng-template appContentRef></ng-template>
-
-
+            
         </div>
         <div class="input-section">
             <input type="text" class="input-field" [(ngModel)]="textMessage" (keydown)="sendMessage($event)" >
