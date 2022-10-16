@@ -99,6 +99,15 @@ export class AppStateService {
   showError(errorText: any) {
     this.notificationService.openSnackBar(errorText, 'error')
   }
+  
+  networkErrorHandler(error:any){
+    const {detail,status} = error?.error;
+    if(status==0){
+      this.showError('NetworkError: Can not connect to server');
+    }else{
+      this.showError(detail);
+    }
+  } 
 
   showNonfiction(text: any) {
     this.notificationService.openSnackBar(text, 'success')

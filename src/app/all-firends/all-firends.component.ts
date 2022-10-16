@@ -99,8 +99,7 @@ export class AllFirendsComponent implements OnInit {
   }
 
   onErrorAction(user: FriendsListItem, error: any) {
-    console.error(error);
-    this.appState.showError(JSON.stringify(error));
+    this.appState.networkErrorHandler(error);
   }
 
   onNextAction(user: FriendsListItem, value: any) {
@@ -110,7 +109,7 @@ export class AllFirendsComponent implements OnInit {
   acceptActionFunction(user:  FriendsListItem) {
     if (this.appState.userDocID)
       return this.db.acceptFriends(this.appState.userDocID, user.uid);
-    return of(null)
+    return of(null);
   }
 
   onNextAcceptAction(user: FriendsListItem, value: any) {
@@ -125,9 +124,11 @@ export class AllFirendsComponent implements OnInit {
       type:NotificationType.NOTIFY
     })
   }
+  
   onErrorAcceptAction(user: FriendsListItem, error: any) {
-    console.error(error);
-    this.appState.showError(JSON.stringify(error));
+    
+    this.appState.networkErrorHandler(error);
+
   }
 
 

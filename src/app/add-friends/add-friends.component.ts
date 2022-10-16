@@ -85,8 +85,7 @@ export class AddFriendsComponent implements OnInit {
   }
 
   onErrorAction(user:UserListItem,error:any){
-    console.error(error);
-    this.appState.showError(JSON.stringify(error));
+    this.appState.networkErrorHandler(error);
   }
 
   onNextAction(user:UserListItem,value:any){
