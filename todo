@@ -1,0 +1,7 @@
+- better way to added people
+    x - update backend logic so that one friend request can not send one person when already send you a request or your are friend with.
+    - show friend requested count in header 
+    - navigation from header also side nave
+- app socket connection should be close when user logout and get connected when user login
+- notify with sound
+- loading should be visible between  google auth and afternet backend auth
