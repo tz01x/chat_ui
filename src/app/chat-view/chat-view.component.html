@@ -6,7 +6,7 @@
     <button mat-icon-button aria-label="go back button" (click)="goBack()"> 
         <mat-icon>arrow_back</mat-icon>
     </button>
-    <div class="username-placeholder" data-active="true">
+    <div class="username-placeholder" [attr.data-active]="activeUserStatus$ | async">
         <span>{{otherPerson?.displayName}}</span>
     </div>
     <button mat-icon-button >

@@ -7,10 +7,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { ContentRefDirective } from './content-ref.directive';
-import { NotificationComponent } from './components/notification/notification.component';
 import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
@@ -24,7 +22,6 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     ReactiveFormsModule,
     provideFirebaseApp(() => initializeApp({ ...environment.firebase })),
-    provideFirestore(() => getFirestore()),
     provideAuth(()=>getAuth()),
     HttpClientModule,
 

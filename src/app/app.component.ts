@@ -53,8 +53,8 @@ export class AppComponent {
 
     this.appState.isAuthUser.subscribe(isAuth=>{
       if(!isAuth){
-        this.router.navigate(['login']);
         this.appState.clearUserInfo();
+        this.router.navigate(['login']);
       }
     })
   }

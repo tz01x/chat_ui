@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap, BehaviorSubject, filter } from 'rxjs';
 import { StoreService } from '../services/store.service';
-import { FriendsListItem, ReloadStatus, User, UserListItem } from '../interfaces';
+import { FriendsListItem, NotificationType, ReloadStatus, User, UserListItem } from '../interfaces';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
@@ -59,7 +59,14 @@ export class AllFirendsComponent implements OnInit {
       })
     ) ;
 
-    this.requestedFriends$ = this.db.getAllFriendRequest(this.appState.userDocID,'');
+    this.requestedFriends$ = this.appState.reloadRequired$
+    .pipe(
+      filter(value=>value==null||value==ReloadStatus.ALL_FRIEND_REQUEST),
+      switchMap(value=>{
+        return this.db.getAllFriendRequest(this.appState.userDocID,'');
+      })
+    );
+
   }
 
   valueChangeHandler() {
@@ -109,6 +116,14 @@ export class AllFirendsComponent implements OnInit {
   onNextAcceptAction(user: FriendsListItem, value: any) {
     this.appState.showNonfiction('Request Accepted');
     this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
+    this.appState.socketConn.sendNotification({
+      to:user.uid,
+      from:this.appState?.userDocID,
+      content:`'${this.appState.user?.displayName}' has Accepted the Request`,
+      reloadRequired:true,
+      reloadStatus:ReloadStatus.CHAT_LIST,
+      type:NotificationType.NOTIFY
+    })
   }
   onErrorAcceptAction(user: FriendsListItem, error: any) {
     console.error(error);

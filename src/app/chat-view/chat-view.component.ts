@@ -4,7 +4,7 @@ import { of, from, map, Observable, BehaviorSubject, tap, Subject } from 'rxjs';
 import { AddUser, Message, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
-import { socketFactory, SocketService } from '../services/socket.service';
+import { ChatSocket, chatSocketFactory } from '../services/sockets/chat-socket';
 import { StoreService } from '../services/store.service';
 import { ChatBubbleComponent } from '../chat-bubble/chat-bubble.component';
 import { ContentRefDirective } from '../content-ref.directive';
@@ -36,10 +36,11 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   messageList$ = this.messageListSubject.asObservable();
   restDistancePointer:any
   otherPerson: User | null = null;
-  chatSocket: SocketService | undefined;
+  chatSocket: ChatSocket | undefined;
   apiLimit=50;
   apiOffset=0;
   isNextPageAvailable=true;
+  activeUserStatus$!:Observable<boolean>;
 
   @ViewChild('scroll', { static: true }) scroll: any;
   @ViewChild(ContentRefDirective, { static: true }) messageListViewChildRef!: ContentRefDirective;
@@ -71,7 +72,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     this.docId = params.get('docId');
     this.roomId = params.get('roomId');
 
-    if (this.docId && this.roomId) {
+    if (this.docId && this.roomId && this.appState.userDocID) {
+
       this.restDistancePointer = !this.restDistancePointer;
       this.messageListSubject.next([]);
       this.isNextPageAvailable=true;
@@ -79,8 +81,9 @@ export class ChatViewComponent implements OnInit, OnDestroy {
       this.apiOffset=0;
 
       this.messageListViewChildRef?.viewContainerRef.clear();
-      this.chatSocket?.setRoom(this.roomId);
-
+      this.chatSocket?.setRoom(this.appState.userDocID, this.roomId, this.docId);
+      this.chatSocket.getUserStatus(this.docId);
+      this.activeUserStatus$ = this.chatSocket.receiveUserState();
       const tmp = this.chatSocket?.getMessages();
       tmp && this.loadMessageFromObservable(tmp);
 
@@ -100,9 +103,9 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   constructSocket() {
     if (this.chatSocket) {
       this.chatSocket.close();
-      return socketFactory();
+      return chatSocketFactory();
     } else {
-      return socketFactory();
+      return chatSocketFactory();
     }
   }
 
@@ -127,7 +130,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
         from_uid: this.appState.user?.uid,
         content: this.textMessage,
         roomId: this.roomId,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        displayName:this.appState.user?.displayName
       })
       this.textMessage = '';
     }
@@ -155,7 +159,6 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     obs$.subscribe((data) => {
       const messages = this.messageListSubject.getValue();
       this.messageListSubject.next([...messages, data as Message]);
-      this.scrollToBottom();
     })
   }
 

@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  chatSocketUrl:'https://tumzied.onrender.com/afterNet',
-  api:'https://tumzied.pythonanywhere.com/afternet',
+  chatSocketUrl:'http://localhost:8080/afterNet',
+  api:'http://127.0.0.1:8000/afternet',
   firebase : {
     apiKey: "AIzaSyBb7AQNYrIPHZ9zu0yIr4zUjRKMnhIFgIE",
     authDomain: "rt-chat-586d8.firebaseapp.com",

@@ -66,4 +66,23 @@ export enum RequestAcceptedStatus{
 export enum ReloadStatus{
     CHAT_LIST = 1,
     CHAT_DETAIL = 2,
+    All_FRIENDS_LIST = 3,
+    ALL_FRIEND_REQUEST =4
+}
+
+
+
+export interface Notification{
+    content:string
+    to:string
+    from:string
+    type:string|null
+    reloadRequired:boolean,
+    reloadStatus:number
+}
+
+export enum NotificationType{
+    MESSAGE = 'message',
+    NOTIFY = 'notify',
+    ERROR = 'error'
 }

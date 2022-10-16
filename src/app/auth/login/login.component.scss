@@ -1,15 +1,39 @@
+
+h1{
+    font-family: 'Faster One', cursive;
+    // font-family: 'Turret Road', cursive;
+    font-size: 1.8em;
+}
+
 .login-section{
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-weight: 500;
+    background-image: url('/assets/ffflurry.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
 }
 
 .outer-border{
+    height: 200px;
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     border-radius: 10px;
     padding: 2em;
     box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.353);
+    background-color: #ffffff;
+}
+
+.form-body{
+    text-align: center;
 }
 
 .loginBtn{

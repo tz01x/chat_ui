@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { user } from '@angular/fire/auth';
-import { Firestore,collection,collectionData,addDoc,query, where, getDoc, getDocs, orderBy, doc, limit, serverTimestamp, onSnapshot } from '@angular/fire/firestore';
 
 import { from ,of,Observable, map, catchError, EMPTY,tap,share,throwError, first, retry} from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -12,19 +10,9 @@ import { AddedFriends, ApiResults, FriendsListItem, Message, User, UserListItem 
 export class StoreService {
   userCollection:any = null; 
   
-  constructor(private fireStore:Firestore,private http:HttpClient) { 
-    this.userCollection = collection(this.fireStore,'user');
+  constructor(private http:HttpClient) { 
   }
   
-  async userExits(data:User){
-
-    const q = query(this.userCollection,where('uid','==',data.uid));
-    const docs = await getDocs(q);
-    if(docs.size==1){
-      return docs.docs[0].id;
-    }
-    return null;
-  }
 
   getUserWithDocId(docId:string){
     return this.http.get<User>(`${environment.api}/get-user/${docId}`).pipe(tap(val=>{
@@ -36,37 +24,6 @@ export class StoreService {
     return this.http.get<ApiResults<Message>>(`${environment.api}/get-messages/${roomId}?limit=${limitNumber}&offset=${offset}`)
   }
   
-  getMessageSnapShort(roomId:string,messageHandler:any) {
-    const q = query(
-      collection(this.fireStore,'/message_room/rooms/'+roomId),
-      orderBy('createdAt','desc')
-      )
-
-    return onSnapshot(q,{
-      next:(data)=>{
-        console.log(data)
-        messageHandler(
-
-          data.docs.map((doc)=>{
-            return doc.data() as Message
-          })
-        );
-      }
-    })
-    
-  }
-
-  sendMessage(message:object,roomId:string){
-     return addDoc(
-      collection(this.fireStore,'/message_room/rooms/'+roomId),
-      {
-        ...message,
-        createdAt:serverTimestamp(),
-      }
-    )
-  }
-
-
   addUser(data:User){
     return this.http.post<User>(`${environment.api}/save-or-crate-user`,data);
   }
