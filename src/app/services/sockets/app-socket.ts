@@ -29,8 +29,14 @@ export class AppSocket extends SocketService {
         this.socket.emit('sendNotification',data)
     }
 
-    static appSocketFactory() {
-        return new AppSocket(new Socket({ url: environment.chatSocketUrl, options: {} }))
+    connect(){
+        this.socket.connect();
+    }
+
+    static appSocketFactory(autoConnect:boolean=true) {
+        return new AppSocket(new Socket({ url: environment.chatSocketUrl, options: {
+            autoConnect:autoConnect
+        } }))
     }
 
 }

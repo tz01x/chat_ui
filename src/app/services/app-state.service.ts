@@ -32,13 +32,22 @@ export class AppStateService {
       } else {
         this.showError(content);
       }
+    });
+
+    this.isAuthUser.subscribe(val=>{
+      if(val==true && this.userDocID){
+        this.socketConn.connect();
+        this.socketConn.setActiveUser(this.userDocID);
+      }else{
+        this.socketConn.close();
+      }
     })
   }
 
   setUserDocID(id: string) {
     this.userDocID = id;
     localStorage.setItem('docID', id);
-    this.socketConn.setActiveUser(this.userDocID);
+    
   }
 
   setUser(user: User) {
@@ -61,7 +70,6 @@ export class AppStateService {
 
   loadUserDocID() {
     this.userDocID = localStorage.getItem('docID');
-    this.userDocID && this.socketConn.setActiveUser(this.userDocID);
   }
 
   loadUserInfo() {
@@ -75,8 +83,8 @@ export class AppStateService {
       this.expiration = new Date(exp)
     }
     if (this.user && this.expiration && this.expiration > new Date()) {
-      this.isAuthUser.next(true);
       this.loadUserDocID();
+      this.isAuthUser.next(true);
       return true;
     }
     this.clearUserInfo();
