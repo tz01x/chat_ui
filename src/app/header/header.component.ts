@@ -4,6 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { AppStateService } from '../services/app-state.service';
+import { IndicatorService } from '../services/indicator.service';
+import {MatBadgeModule} from '@angular/material/badge';
 
 @Component({
   standalone:true,
@@ -12,6 +14,7 @@ import { AppStateService } from '../services/app-state.service';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
+    MatBadgeModule,
   ],
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -19,7 +22,10 @@ import { AppStateService } from '../services/app-state.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(public appState:AppStateService) { }
+  constructor(
+    public appState:AppStateService,
+    public indicator:IndicatorService
+  ) { }
 
   ngOnInit(): void {
   }

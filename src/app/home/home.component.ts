@@ -8,6 +8,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ChatlistComponent } from '../chatlist/chatlist.component';
 import { HeaderComponent } from '../header/header.component';
 import { AppStateService } from '../services/app-state.service';
+import {MatBadgeModule} from '@angular/material/badge';
+import { IndicatorService } from '../services/indicator.service';
 
 @Component({
   standalone:true,
@@ -20,6 +22,7 @@ import { AppStateService } from '../services/app-state.service';
     MatIconModule,
     MatButtonModule,
     MatSidenavModule,
+    MatBadgeModule
   ],
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -28,7 +31,9 @@ import { AppStateService } from '../services/app-state.service';
 export class HomeComponent implements OnInit {
 
   constructor(public appState:AppStateService,
-    private router:Router) { }
+    private router:Router,
+    public indicator:IndicatorService,
+    ) { }
 
   ngOnInit(): void {
   }
