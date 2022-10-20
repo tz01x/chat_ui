@@ -80,7 +80,7 @@ export class AddFriendsComponent implements OnInit {
       from:this.appState.userDocID,
       type:NotificationType.NOTIFY,
       reloadRequired:true,
-      reloadStatus:ReloadStatus.ALL_FRIEND_REQUEST
+      reloadStatus:ReloadStatus.FRIEND_REQUEST
     })
   }
 

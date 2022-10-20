@@ -61,7 +61,7 @@ export class AllFirendsComponent implements OnInit {
 
     this.requestedFriends$ = this.appState.reloadRequired$
     .pipe(
-      filter(value=>value==null||value==ReloadStatus.ALL_FRIEND_REQUEST),
+      filter(value=>value==null||value==ReloadStatus.FRIEND_REQUEST),
       switchMap(value=>{
         return this.db.getAllFriendRequest(this.appState.userDocID,'');
       })
