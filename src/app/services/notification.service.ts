@@ -18,7 +18,7 @@ export class NotificationService {
       panelClass:type,
       verticalPosition:'top',
       horizontalPosition:'right',
-      // duration: this.durationInSeconds * 1000,
+      duration: this.durationInSeconds * 1000,
     });
   }
 }
