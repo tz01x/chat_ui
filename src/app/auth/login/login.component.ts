@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppStateService } from '../../services/app-state.service';
 import { Auth, GoogleAuthProvider, signInWithPopup, UserCredential } from '@angular/fire/auth';
-import { concatMap, distinctUntilChanged, filter, from, of, switchMap } from 'rxjs';
+import { from, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { User } from 'src/app/interfaces';
+import { InteractiveLoading } from 'src/app/loading';
 
 
 @Component({
@@ -16,6 +17,7 @@ import { User } from 'src/app/interfaces';
 export class LoginComponent implements OnInit {
   title = "Login";
   loading = false;
+  interactiveLoading:InteractiveLoading;
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
@@ -27,7 +29,9 @@ export class LoginComponent implements OnInit {
     public auth: Auth,
     private router: Router,
     private db: StoreService
-  ) { }
+  ) { 
+    this.interactiveLoading = new InteractiveLoading();
+  }
 
   ngOnInit(): void {
   }
@@ -68,18 +72,23 @@ export class LoginComponent implements OnInit {
 
     from(userCredential.user.getIdToken())
       .pipe(switchMap((accessToken) => {
-        return this.addUserToDB({
-          email,
-          displayName,
-          photoURL,
-          uid,
-          refreshToken,
-          'accessToken': accessToken,
-          other: JSON.stringify(userCredential.user.toJSON())
-        })
+
+        return this.interactiveLoading.showLoaderUntilCompleted(
+          this.addUserToDB({
+            email,
+            displayName,
+            photoURL,
+            uid,
+            refreshToken,
+            'accessToken': accessToken,
+            other: JSON.stringify(userCredential.user.toJSON())
+          })
+        );
+         
       })).subscribe({
         next: (res) => {
           const userRes = res as User;
+          this.appState.setUser(userRes);
           this.appState.setUserDocID(userRes.uid);
         },
         error:(err)=>{
@@ -99,7 +108,6 @@ export class LoginComponent implements OnInit {
   }
 
   addUserToDB(user: User) {
-    this.appState.setUser(user);
     return this.db.addUser(user);
   }
 

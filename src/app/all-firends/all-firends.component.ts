@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { AddFriendsListItemComponent } from '../components/add-friends-list-item/add-friends-list-item.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
+import {MatBadgeModule} from '@angular/material/badge';
+import { IndicatorService } from '../services/indicator.service';
 
 @Component({
   standalone:true,
@@ -24,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatDividerModule,
     MatTabsModule,
     AddFriendsListItemComponent,
+    MatBadgeModule,
     
   ],
   selector: 'app-all-firends',
@@ -45,6 +48,7 @@ export class AllFirendsComponent implements OnInit {
     public appState: AppStateService,
     private router: Router,
     private db: StoreService,
+    public indicator:IndicatorService
   ) {
     this.searchFormControl = new FormControl('');
   }
@@ -61,7 +65,7 @@ export class AllFirendsComponent implements OnInit {
 
     this.requestedFriends$ = this.appState.reloadRequired$
     .pipe(
-      filter(value=>value==null||value==ReloadStatus.ALL_FRIEND_REQUEST),
+      filter(value=>value==null||value==ReloadStatus.FRIEND_REQUEST),
       switchMap(value=>{
         return this.db.getAllFriendRequest(this.appState.userDocID,'');
       })
@@ -99,8 +103,7 @@ export class AllFirendsComponent implements OnInit {
   }
 
   onErrorAction(user: FriendsListItem, error: any) {
-    console.error(error);
-    this.appState.showError(JSON.stringify(error));
+    this.appState.networkErrorHandler(error);
   }
 
   onNextAction(user: FriendsListItem, value: any) {
@@ -110,7 +113,7 @@ export class AllFirendsComponent implements OnInit {
   acceptActionFunction(user:  FriendsListItem) {
     if (this.appState.userDocID)
       return this.db.acceptFriends(this.appState.userDocID, user.uid);
-    return of(null)
+    return of(null);
   }
 
   onNextAcceptAction(user: FriendsListItem, value: any) {
@@ -125,9 +128,11 @@ export class AllFirendsComponent implements OnInit {
       type:NotificationType.NOTIFY
     })
   }
+  
   onErrorAcceptAction(user: FriendsListItem, error: any) {
-    console.error(error);
-    this.appState.showError(JSON.stringify(error));
+    
+    this.appState.networkErrorHandler(error);
+
   }
 
 

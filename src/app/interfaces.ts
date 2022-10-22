@@ -67,7 +67,7 @@ export enum ReloadStatus{
     CHAT_LIST = 1,
     CHAT_DETAIL = 2,
     All_FRIENDS_LIST = 3,
-    ALL_FRIEND_REQUEST =4
+    FRIEND_REQUEST = 4
 }
 
 

@@ -80,13 +80,12 @@ export class AddFriendsComponent implements OnInit {
       from:this.appState.userDocID,
       type:NotificationType.NOTIFY,
       reloadRequired:true,
-      reloadStatus:ReloadStatus.ALL_FRIEND_REQUEST
+      reloadStatus:ReloadStatus.FRIEND_REQUEST
     })
   }
 
   onErrorAction(user:UserListItem,error:any){
-    console.error(error);
-    this.appState.showError(JSON.stringify(error));
+    this.appState.networkErrorHandler(error);
   }
 
   onNextAction(user:UserListItem,value:any){

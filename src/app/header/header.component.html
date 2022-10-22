@@ -1,24 +1,32 @@
-
-
 <mat-toolbar>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="appState.toggleDraw()">
-    <mat-icon>menu</mat-icon>
-</button>
-<div class="name-and-image"> 
-       <!-- <img *ngIf="appState.user?.photoURL" class="userphoto"   src="{{appState.user?.photoURL}}" alt="photo" srcset=""> -->
-    
-    <!-- <span>{{appState.user?.displayName}}</span> -->
-    <!-- <mat-icon>forum</mat-icon> -->
-    <span class="header-title">AfterNet</span>
-</div>
-<span class="example-spacer"></span>
-<!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <button 
+    mat-icon-button class="example-icon" 
+    aria-label="Example icon-button with menu icon"
+    (click)="appState.toggleDraw()" 
+    >
+        <mat-icon
+        [matBadge]="indicator.requestIndicator$ | async" 
+        matBadgeSize="small"
+        matBadgeOverlap="true" 
+        [matBadgeHidden]="(indicator.requestIndicator$|async) == 0" 
+        matBadgeColor="warn"
+        >menu</mat-icon>
+    </button>
+    <div class="name-and-image">
+        <!-- <img *ngIf="appState.user?.photoURL" class="userphoto"   src="{{appState.user?.photoURL}}" alt="photo" srcset=""> -->
+
+        <!-- <span>{{appState.user?.displayName}}</span> -->
+        <!-- <mat-icon>forum</mat-icon> -->
+        <span class="header-title">AfterNet</span>
+    </div>
+    <span class="example-spacer"></span>
+    <!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
     <mat-icon>favorite</mat-icon>
 </button> -->
-<button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-    
+    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+
         <mat-icon *ngIf="appState.darkMode$|async" (click)="appState.toggleDarkMode()">brightness_4</mat-icon>
         <mat-icon *ngIf="!(appState.darkMode$|async)" (click)="appState.toggleDarkMode()">brightness_7</mat-icon>
-   
-</button> 
+
+    </button>
 </mat-toolbar>

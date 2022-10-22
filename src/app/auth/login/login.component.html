@@ -1,14 +1,16 @@
 <section class="login-section" color="primary">
 
     <div class="outer-border">
-
+        
         <header>
             <h1>
                 AfterNet
             </h1>
         </header>
-
-        <main class="form-body">
+        <ng-template #loading_spinner>
+            <app-loading-spiner></app-loading-spiner>
+        </ng-template>
+        <main class="form-body" *ngIf="!(this.interactiveLoading.loading$ | async); else loading_spinner">
             <div>
                 Continue to login or create a new account
             </div>
@@ -47,6 +49,10 @@
                     Sign in with Google
                 </div>
             </button>
+
+            <div style="margin-top: 1em ;">
+                Developed by <a href="http://tumzied.pythonanywhere.com/"> <i>Tumzied</i></a>
+            </div>
         </main>
     </div>
 </section>
