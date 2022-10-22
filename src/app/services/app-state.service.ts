@@ -1,6 +1,8 @@
+import { ThisReceiver } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of, Subject, switchMap, timer } from 'rxjs';
-import { Notification, NotificationType, User } from '../interfaces';
+import { Notification, NotificationType, ReloadStatus, User } from '../interfaces';
+import { IndicatorService } from './indicator.service';
 import { NotificationService } from './notification.service';
 import { AppSocket } from './sockets/app-socket';
 
@@ -8,7 +10,7 @@ import { AppSocket } from './sockets/app-socket';
   providedIn: 'root'
 })
 export class AppStateService {
-  private darkModeSubject = new BehaviorSubject<boolean>(false);
+  private darkModeSubject = new BehaviorSubject<boolean>(true);
   darkMode$ = this.darkModeSubject.asObservable();
   isViewPortLarge: boolean = true;
   userDocID: string | null = null;
@@ -20,19 +22,10 @@ export class AppStateService {
   reloadRequired$ = new BehaviorSubject<number | null>(null);
   socketConn = AppSocket.appSocketFactory();
 
-  constructor(private notificationService: NotificationService) {
-    this.socketConn.notification().subscribe((data: Notification) => {
-      const { content, reloadRequired, reloadStatus, type } = data;
+  constructor(private notificationService: NotificationService,private indicator:IndicatorService) {
 
-      if (type !== NotificationType.ERROR) {
-        if (reloadRequired) {
-          this.reloadRequired$.next(reloadStatus)
-        }
-        this.showNonfiction(content);
-      } else {
-        this.showError(content);
-      }
-    });
+    this.socketConn.notification()
+    .subscribe((data: Notification) => this.notificationHandler(data));
 
     this.isAuthUser.subscribe(val=>{
       if(val==true && this.userDocID){
@@ -42,6 +35,26 @@ export class AppStateService {
         this.socketConn.close();
       }
     })
+  }
+
+  notificationHandler(data:Notification){
+    const { content, reloadRequired, reloadStatus, type } = data;
+
+    if (type === NotificationType.ERROR) {
+      this.showError(content); 
+      return;
+    }
+
+    if (reloadRequired) {
+      this.reloadRequired$.next(reloadStatus);
+    }
+
+    
+    if(reloadStatus===ReloadStatus.FRIEND_REQUEST){
+      this.indicator.incrementRequestIndicator()
+    }
+    
+    this.showNonfiction(content);
   }
 
   setUserDocID(id: string) {

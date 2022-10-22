@@ -12,6 +12,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { AddFriendsListItemComponent } from '../components/add-friends-list-item/add-friends-list-item.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
+import {MatBadgeModule} from '@angular/material/badge';
+import { IndicatorService } from '../services/indicator.service';
 
 @Component({
   standalone:true,
@@ -24,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatDividerModule,
     MatTabsModule,
     AddFriendsListItemComponent,
+    MatBadgeModule,
     
   ],
   selector: 'app-all-firends',
@@ -45,6 +48,7 @@ export class AllFirendsComponent implements OnInit {
     public appState: AppStateService,
     private router: Router,
     private db: StoreService,
+    public indicator:IndicatorService
   ) {
     this.searchFormControl = new FormControl('');
   }

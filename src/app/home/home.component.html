@@ -32,7 +32,14 @@
                 </button>
             </div>
             <div [routerLink]="['/home/all-friends']" class="addFirendsLink">
-                <button mat-flat-button >
+                <button 
+                mat-flat-button 
+                [matBadge]="indicator.requestIndicator$ | async" 
+                matBadgeSize="small"
+                matBadgeOverlap="false" 
+                [matBadgeHidden]="( indicator.requestIndicator$ | async ) === 0"
+                matBadgeColor="warn"
+                >
                     <div class="button-icon-container">
                         <mat-icon>supervisor_account</mat-icon>
                         <div>

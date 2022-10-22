@@ -25,8 +25,19 @@
                 </div>
             </div>
         </mat-tab>
-        <mat-tab label="Request">
-            <div></div>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div
+                [matBadge]="indicator.requestIndicator$ | async" 
+                matBadgeSize="small" 
+                matBadgeOverlap="false"
+                [matBadgeHidden]="(indicator.requestIndicator$ | async) == 0"
+                matBadgeColor="warn"
+                (click)="indicator.clearRequestIndicator()"
+                >
+                    Request
+                </div>
+            </ng-template>
             <div class="searchResultes">
                 <div *ngFor="let user of requestedFriends$ |async">
                     <app-add-friends-list-item 
@@ -43,6 +54,5 @@
         </mat-tab>
         
       </mat-tab-group>
-    
 
 </div>
