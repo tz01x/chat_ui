@@ -4,4 +4,4 @@
     x - show friend request indicator
 x - app socket connection should be close when user logout and get connected when user login
 - notify with sound
-- loading should be visible between  google auth and afternet backend auth
+x - loading should be visible between  google auth and afternet backend auth
