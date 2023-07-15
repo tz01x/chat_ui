@@ -3,6 +3,7 @@ import { Socket } from 'ngx-socket-io';
 import { tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SocketService } from './base-socket';
+import { iMessage, iMessagePayload } from 'src/app/interfaces';
 
 
 export class ChatSocket extends SocketService{
@@ -26,14 +27,18 @@ export class ChatSocket extends SocketService{
     this._connected_with_uid = connected_with_uid;
     this.socket.emit('setRoom',{roomId:roomId,uid:this._uid,connected_with_uid});
   }
-  sendMessage(data:any){
+  sendMessage(data:iMessagePayload){
     this.socket.emit('sendMessage',data)
   }
   getMessages(){
     // this.socket.fromEvent('receiveMessage').subscribe((value:any)=>{
     //   console.log(value);
     // })
-    return this.socket.fromEvent('receiveMessage');
+    return this.socket.fromEvent<iMessage>('receiveMessage');
+  }
+
+  getLastSentMessage(){
+    return this.socket.fromEvent<iMessage>('lastSentMessage');
   }
 
   getUserStatus(uid:string){

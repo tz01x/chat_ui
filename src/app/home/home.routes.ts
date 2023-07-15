@@ -11,7 +11,7 @@ export const HomeRoutes: Routes = [
                 loadComponent: () => import('../chatlist/chatlist.component').then(c => c.ChatlistComponent)
             },
             {
-                path: 'message/:docId/:roomId',
+                path: 'message/:displayName/:roomId/:chatRoomId',
                 loadComponent: () => import('../chat-view/chat-view.component').then(c => c.ChatViewComponent)
             },
             {

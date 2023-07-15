@@ -8,12 +8,14 @@ import { Router, RouterModule } from '@angular/router';
 import { ChatlistComponent } from '../chatlist/chatlist.component';
 import { HeaderComponent } from '../header/header.component';
 import { AppStateService } from '../services/app-state.service';
-import {MatBadgeModule} from '@angular/material/badge';
+import { MatBadgeModule } from '@angular/material/badge';
 import { IndicatorService } from '../services/indicator.service';
+import { Auth, signOut } from '@angular/fire/auth';
+import { EMPTY, catchError, from } from 'rxjs';
 
 @Component({
-  standalone:true,
-  imports:[
+  standalone: true,
+  imports: [
     CommonModule,
     RouterModule,
     ChatlistComponent,
@@ -30,17 +32,24 @@ import { IndicatorService } from '../services/indicator.service';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(public appState:AppStateService,
-    private router:Router,
-    public indicator:IndicatorService,
-    ) { }
+  constructor(public appState: AppStateService,
+    private router: Router,
+    public indicator: IndicatorService,
+    private auth: Auth
+  ) { }
 
   ngOnInit(): void {
   }
 
-  
-  logout(){
-    this.appState.isAuthUser.next(false);
+
+  logout() {
+    
+
+    from(signOut(this.auth)).pipe(catchError(() => {
+      return EMPTY;
+    })).subscribe(() => {
+      this.appState.isAuthUser.next(false);
+    });
   }
 
 }

@@ -39,6 +39,7 @@ export class AppComponent {
             }else{
               this.appState.isViewPortLarge = true;
             }
+            this.appState.reloadRequired$.next(null);
           }
         }
       });

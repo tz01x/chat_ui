@@ -1,5 +1,17 @@
-<div [ngClass]="{'chat-bubble':true,darkMode:(this.appState.darkMode$|async)}" [attr.data-owner]="owner">
-    <p>
-        {{textMessage}}
-    </p>
+<div class="chat-bubble" [attr.data-owner]="owner">
+    <div ngClass="message-space">
+        <div ngClass="user-info" [attr.data-displayName]="message.user?.displayName">
+            <img [src]="message.user?.photoURL" [alt]="message.user?.displayName">
+        </div>
+        <div [ngClass]="{'message-content':true,darkMode:(this.appState.darkMode$|async)}">
+            <p>
+                {{message.value}}
+            </p>
+        </div>
+    </div>
+    <div *ngIf="message.status=='error'" class="error-warning" >
+        <small>
+            could not connect to server
+        </small>
+    </div>
 </div>

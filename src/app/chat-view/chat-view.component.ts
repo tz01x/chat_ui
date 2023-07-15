@@ -1,7 +1,7 @@
 import { AfterViewChecked, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { of, from, map, Observable, BehaviorSubject, tap, Subject } from 'rxjs';
-import { AddUser, Message, User } from '../interfaces';
+import { of, from, map, Observable, BehaviorSubject, tap, Subject, takeUntil } from 'rxjs';
+import { AddUser, iMessage, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
 import { ChatSocket, chatSocketFactory } from '../services/sockets/chat-socket';
@@ -29,18 +29,21 @@ import { InfiniteScrollDirective } from '../infinite-scroll.directive';
   styleUrls: ['./chat-view.component.scss'],
 })
 export class ChatViewComponent implements OnInit, OnDestroy {
-  docId: string | null = null;
+  chatRoomId: string | null = null;
   roomId: string | null = null;
   textMessage: string | null = null;
-  private messageListSubject = new BehaviorSubject<Message[]>([]);
-  messageList$ = this.messageListSubject.asObservable();
-  restDistancePointer:any
+  displayName: string | null = null;
+  messageListSubject$ = new BehaviorSubject<iMessage[]>([]);
+  // messageList$ = this.messageListSubject$.asObservable();
+  restDistancePointer: any
   otherPerson: User | null = null;
   chatSocket: ChatSocket | undefined;
-  apiLimit=50;
-  apiOffset=0;
-  isNextPageAvailable=true;
-  activeUserStatus$!:Observable<boolean>;
+  apiLimit = 50;
+  apiOffset = 0;
+  isNextPageAvailable = true;
+  activeUserStatus$!: Observable<boolean>;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
 
   @ViewChild('scroll', { static: true }) scroll: any;
   @ViewChild(ContentRefDirective, { static: true }) messageListViewChildRef!: ContentRefDirective;
@@ -67,36 +70,35 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   }
 
   private onRouteChange(params: ParamMap, db: StoreService) {
+
+    this.roomId = params.get('roomId');
+    this.chatRoomId = params.get('chatRoomId');
+    this.displayName = params.get('displayName');
     this.chatSocket = this.constructSocket();
 
-    this.docId = params.get('docId');
-    this.roomId = params.get('roomId');
-
-    if (this.docId && this.roomId && this.appState.userDocID) {
-
-      this.restDistancePointer = !this.restDistancePointer;
-      this.messageListSubject.next([]);
-      this.isNextPageAvailable=true;
-      this.apiLimit=50;
-      this.apiOffset=0;
-
-      this.messageListViewChildRef?.viewContainerRef.clear();
-      this.chatSocket?.setRoom(this.appState.userDocID, this.roomId, this.docId);
-      this.chatSocket.getUserStatus(this.docId);
-      this.activeUserStatus$ = this.chatSocket.receiveUserState();
-      const tmp = this.chatSocket?.getMessages();
-      tmp && this.loadMessageFromObservable(tmp);
-
-      db.getUserWithDocId(this.docId)
-        .subscribe({
-          next: (value) => {
-            this.otherPerson = value;
-            this.loadMessage();
-          },
-          error: (error) => this.appState.showError('Error! Invalid Id')
-        });
-
+    if (!this.roomId || !this.chatRoomId || !this.appState.userDocID) {
+      return
     }
+
+
+
+    this.restDistancePointer = !this.restDistancePointer;
+    this.isNextPageAvailable = true;
+    this.apiLimit = 50;
+    this.apiOffset = 0;
+
+    this.messageListViewChildRef?.viewContainerRef.clear();
+    this.chatSocket.setRoom(this.appState.userDocID, this.roomId, this.chatRoomId);
+    // this.chatSocket.getUserStatus(this.chatRoomId);
+    // this.activeUserStatus$ = this.chatSocket.receiveUserState();
+    
+    this.loadAllMessages();
+    this.loadMessageFromObservable(this.chatSocket.getMessages());
+    this.loadMessageFromObservable(this.chatSocket.getLastSentMessage());
+
+
+
+
   }
 
 
@@ -122,43 +124,43 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 
   sendMessage(event: any) {
     const { code, keyCode, type } = event;
-    if (!this.roomId)
+    if (!this.roomId || !this.chatRoomId || !this.appState.userDocID)
       return;
 
     if ((code == 'Enter' || type == 'click') && this.textMessage) {
+
       this.chatSocket?.sendMessage({
-        from_uid: this.appState.user?.uid,
-        content: this.textMessage,
-        roomId: this.roomId,
-        createdAt: Date.now(),
-        displayName:this.appState.user?.displayName
+        value: this.textMessage,
+        msg_type: 'TEXT',
+        chat_room_id: this.chatRoomId,
+        user_uid: this.appState.userDocID,
       })
       this.textMessage = '';
     }
 
   }
 
-  loadMessage() {
+  loadAllMessages() {
     if (!this.roomId) {
       return;
     }
-    if(!this.isNextPageAvailable)
+    if (!this.isNextPageAvailable)
       return;
 
 
-    this.db.getMessages(this.roomId, this.apiLimit,this.apiOffset)
+    this.db.getMessages(this.roomId, this.apiLimit, this.apiOffset)
       .pipe(tap((queryData) => {
         console.log(queryData);
         this.isNextPageAvailable = !!queryData.next;
         this.apiOffset += this.apiLimit
-        this.messageListSubject.next([...queryData.results.reverse(),...this.messageListSubject.getValue()]);
+        this.messageListSubject$.next([...queryData.results.reverse(), ...this.messageListSubject$.getValue()]);
       })).subscribe();
   }
 
-  loadMessageFromObservable(obs$: Observable<any>) {
-    obs$.subscribe((data) => {
-      const messages = this.messageListSubject.getValue();
-      this.messageListSubject.next([...messages, data as Message]);
+  loadMessageFromObservable(obs$: Observable<iMessage>) {
+    obs$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
+      const messages = this.messageListSubject$.getValue();
+      this.messageListSubject$.next([...messages, data]);
     })
   }
 
@@ -168,12 +170,15 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   }
 
   onScrollUp() {
-   this.loadMessage();
+    this.loadAllMessages();
   }
 
 
   ngOnDestroy(): void {
     this.chatSocket?.close();
+    this.messageListSubject$.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe()
   }
 
 

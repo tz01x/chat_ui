@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   chatSocketUrl:'http://localhost:8080/afterNet',
-  api:'http://127.0.0.1:8000/afternet',
+  api:'http://127.0.0.1:8000/api/afternet',
   firebase : {
     apiKey: "AIzaSyBb7AQNYrIPHZ9zu0yIr4zUjRKMnhIFgIE",
     authDomain: "rt-chat-586d8.firebaseapp.com",

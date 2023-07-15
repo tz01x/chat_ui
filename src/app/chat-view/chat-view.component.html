@@ -7,7 +7,7 @@
         <mat-icon>arrow_back</mat-icon>
     </button>
     <div class="username-placeholder" [attr.data-active]="activeUserStatus$ | async">
-        <span>{{otherPerson?.displayName}}</span>
+        <span>{{displayName}}</span>
     </div>
     <button mat-icon-button >
         <mat-icon>info</mat-icon>
@@ -22,10 +22,10 @@
         [throttleDistance]="200"
         #scroll 
         >
-            <app-chat-bubble   #messages *ngFor="let msg of (messageList$ | async); let last = last;"
-            [owner]="msg.from_uid == appState.user?.uid" 
+            <app-chat-bubble   #messages *ngFor="let msg of (messageListSubject$ | async); let last = last;"
+            [owner]="msg.user?.uid == appState.user?.uid" 
             [timeStamp]="1221"
-            [textMessage]="msg.content"
+            [message]="msg"
             [isLast]="last"
             (lastComponentViewRender)="lastComponentViewRender()"
             ></app-chat-bubble>

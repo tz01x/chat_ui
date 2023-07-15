@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { from ,of,Observable, map, catchError, EMPTY,tap,share,throwError, first, retry} from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AddedFriends, ApiResults, FriendsListItem, Message, User, UserListItem } from '../interfaces';
+import { AddedFriends, ApiResults, ChatRoomItem, FriendsListItem, iMessage, User, UserListItem } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
@@ -21,15 +21,15 @@ export class StoreService {
   }
 
   getMessages(roomId:string,limitNumber:number=10,offset=0){
-    return this.http.get<ApiResults<Message>>(`${environment.api}/get-messages/${roomId}?limit=${limitNumber}&offset=${offset}`)
+    return this.http.get<ApiResults<iMessage>>(`${environment.api}/get-messages/${roomId}?limit=${limitNumber}&offset=${offset}`)
   }
   
   addUser(data:User){
     return this.http.post<User>(`${environment.api}/save-or-crate-user`,data);
   }
 
-  getFriendsList(uid:string) {
-   return this.http.get<AddedFriends[]>(`${environment.api}/get-add-friends/${uid}`)
+  getChatRoomList(uid:string) {
+   return this.http.get<ChatRoomItem[]>(`${environment.api}/get-user-chat-rooms/${uid}`)
    .pipe(share());
   }
 

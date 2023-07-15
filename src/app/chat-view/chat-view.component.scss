@@ -7,7 +7,6 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: -2px 3px 4px 1px #dce4dc;
-    border-radius: 19px;
 }
 
 .darkMode .nav{
@@ -38,12 +37,17 @@
 .chat-view-body{
     display: flex;
     flex-direction: column;
+    padding: 0 1em 0 1em;
 }
 
 .message-list{
     height: calc(100vh - 176px);
     overflow: hidden;
     overflow-y: scroll;
+}
+
+.message-list::-webkit-scrollbar{
+    display: none;
 }
 
 .input-section{

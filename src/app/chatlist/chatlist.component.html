@@ -9,11 +9,11 @@
    <ul class="list-items">
       <li
       class="list-item"
-      *ngFor="let folder of peoples$ | async; last as last">
-      <div  [routerLink]="['/home/message',folder.uid,folder.roomId]"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
+      *ngFor="let room of chatRooms$ | async; last as last">
+      <div  [routerLink]="['/home/message',room.display_name,room.room_id,room.id]"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
          <button mat-button class="list-item-box">
             <mat-icon mat-list-icon>account_circle</mat-icon>
-            {{folder.displayName}}
+            {{room.display_name}}
          </button>
       </div>
       </li>
