@@ -93,10 +93,17 @@ export interface ChatRoomItem {
     id: number;
     room_id: string;
     type: ChatRoomType;
-    display_name: string;
+    display_property: {
+        displayName: string;
+        photoURL: string;
+    };
     last_message: string;
 }
 
+export interface iGetChatRoomResponse{
+    found: boolean;
+    chatRoom: ChatRoomItem;
+}
 
 
 export interface Notification {

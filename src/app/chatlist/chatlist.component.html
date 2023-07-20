@@ -10,10 +10,17 @@
       <li
       class="list-item"
       *ngFor="let room of chatRooms$ | async; last as last">
-      <div  [routerLink]="['/home/message',room.display_name,room.room_id,room.id]"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
+      <div  [routerLink]="['/home/message',room.id,room.room_id]" (click)="activeRoom(room)"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
          <button mat-button class="list-item-box">
-            <mat-icon mat-list-icon>account_circle</mat-icon>
-            {{room.display_name}}
+            <div class="btn-wrapper">
+
+               <div class="avater-img">
+                  <img [src]="room.display_property.photoURL" alt="" srcset="">
+               </div>
+               <p>
+                  {{room.display_property.displayName}}
+               </p>
+            </div>
          </button>
       </div>
       </li>

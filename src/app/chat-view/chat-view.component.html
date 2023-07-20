@@ -1,18 +1,21 @@
-<section [ngClass]="{'chat-view-section':true,darkMode:(appState.darkMode$|async)}">
+<section [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async)}">
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
         Can not connect to server
     </div>
-  <nav class="nav">
-    <button mat-icon-button aria-label="go back button" (click)="goBack()"> 
-        <mat-icon>arrow_back</mat-icon>
-    </button>
-    <div class="username-placeholder" [attr.data-active]="activeUserStatus$ | async">
-        <span>{{displayName}}</span>
+    <div *ngIf="!_appState.isViewPortLarge">
+        <nav class="nav">
+            <button mat-icon-button aria-label="go back button" (click)="goBack()"> 
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div class="username-placeholder" [attr.data-active]="false" *ngIf="currentChatRoom$ |async as room">
+                <span>{{room?.chatRoom?.display_property?.displayName}}</span>
+            </div>
+            <button mat-icon-button >
+                <mat-icon>info</mat-icon>
+            </button>
+          </nav>
     </div>
-    <button mat-icon-button >
-        <mat-icon>info</mat-icon>
-    </button>
-  </nav>
+
   <main class="chat-view-body"  >
         <div 
         class="message-list"
@@ -23,7 +26,7 @@
         #scroll 
         >
             <app-chat-bubble   #messages *ngFor="let msg of (messageListSubject$ | async); let last = last;"
-            [owner]="msg.user?.uid == appState.user?.uid" 
+            [owner]="msg.user?.uid == _appState.user?.uid" 
             [timeStamp]="1221"
             [message]="msg"
             [isLast]="last"
