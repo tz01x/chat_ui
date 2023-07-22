@@ -4,6 +4,13 @@
    </div>
 </div>
 <ng-template #elseBlock>
+   <div class="additonal-items">
+      
+         <button mat-icon-button matTooltip="Create Group" matTooltipPosition="above">
+            <mat-icon>add_circle_outline</mat-icon>
+         </button>
+      
+   </div>
    <div class="search-bar">
       <app-chat-room-search-bar (onSummit)="searchingForChatRoom($event)"></app-chat-room-search-bar>
    </div>

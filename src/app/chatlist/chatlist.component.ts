@@ -13,6 +13,7 @@ import { StoreService } from '../services/store.service';
 import { ChatRoomSelectorService } from '../services/chat-room-selector.service';
 import { ChatRoomSearchBarComponent } from '../components/chat-room-search-bar/chat-room-search-bar.component';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Component({
   standalone: true,
@@ -24,7 +25,9 @@ import { UserAvaterComponent } from '../components/user-avater/user-avatar.compo
     MatButtonModule,
     LoadingSpinerComponent,
     UserAvaterComponent,
+    MatTooltipModule,
   ],
+
   selector: 'app-chatlist',
   templateUrl: './chatlist.component.html',
   styleUrls: ['./chatlist.component.scss'],

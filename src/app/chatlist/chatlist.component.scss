@@ -25,35 +25,6 @@ $based-padding: 0.5em 1em;
     height: inherit;
     padding: $based-padding;
 
-    .btn-wrapper {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 15px;
-
-        p {
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 90%;
-            text-align: start;
-
-        }
-
-        .avater-img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            overflow: hidden;
-            img{
-                width: 100%;
-                object-fit: contain;
-            }
-        }
-
-    }
-
 }
 
 .list-item-active .list-item-box {
@@ -73,4 +44,9 @@ $based-padding: 0.5em 1em;
 
 .search-bar{
     padding: $based-padding;
+}
+
+.additonal-items{
+    display: flex;
+    justify-content: end;
 }
