@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollDirective } from '../infinite-scroll.directive';
 import { ChatRoomSelectorService } from '../services/chat-room-selector.service';
+import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
 
 @Component({
   standalone: true,
@@ -24,6 +25,7 @@ import { ChatRoomSelectorService } from '../services/chat-room-selector.service'
     MatButtonModule,
     FormsModule,
     InfiniteScrollDirective,
+    UserAvaterComponent,
   ],
   selector: 'app-chat-view',
   templateUrl: './chat-view.component.html',

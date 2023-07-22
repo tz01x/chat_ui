@@ -1,3 +1,5 @@
+$based-padding: 0.5em 1em;
+
 .list-items {
     width: 100%;
     padding: 0;
@@ -21,7 +23,7 @@
 .list-item-box {
     width: 100%;
     height: inherit;
-    padding: 0.5em 1em;
+    padding: $based-padding;
 
     .btn-wrapper {
         display: flex;
@@ -44,6 +46,10 @@
             height: 30px;
             border-radius: 50%;
             overflow: hidden;
+            img{
+                width: 100%;
+                object-fit: contain;
+            }
         }
 
     }
@@ -63,4 +69,8 @@
     img {
         width: 50%;
     }
+}
+
+.search-bar{
+    padding: $based-padding;
 }

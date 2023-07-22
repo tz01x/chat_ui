@@ -1,0 +1,30 @@
+.avatar-item {
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 10px;
+
+    p {
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 90%;
+        text-align: start;
+
+    }
+
+    .avater-img {
+        width: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+
+        img {
+            width: 100%;
+            object-fit: contain;
+        }
+    }
+
+}

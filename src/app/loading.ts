@@ -19,10 +19,12 @@ export class InteractiveLoading{
 
     loadingOn() {
         this.loadingSubject.next(true);
+        console.log('loading on ');
 
     }
 
     loadingOff() {
+        console.log('loading off');
         this.loadingSubject.next(false);
     }
 

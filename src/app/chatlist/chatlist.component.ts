@@ -4,22 +4,26 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
-import { delay, filter, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { concat, debounceTime, delay, distinctUntilChanged, filter, from, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
 import { AddedFriends, AddUser, ChatRoomItem, ReloadStatus } from '../interfaces';
 import { InteractiveLoading } from '../loading';
 import { LoadingSpinerComponent } from '../loading-spiner/loading-spiner.component';
 import { AppStateService } from '../services/app-state.service';
 import { StoreService } from '../services/store.service';
 import { ChatRoomSelectorService } from '../services/chat-room-selector.service';
+import { ChatRoomSearchBarComponent } from '../components/chat-room-search-bar/chat-room-search-bar.component';
+import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
 
 @Component({
-  standalone:true,
-  imports:[
+  standalone: true,
+  imports: [
+    ChatRoomSearchBarComponent,
     CommonModule,
     RouterModule,
     MatIconModule,
     MatButtonModule,
     LoadingSpinerComponent,
+    UserAvaterComponent,
   ],
   selector: 'app-chatlist',
   templateUrl: './chatlist.component.html',
@@ -29,52 +33,62 @@ import { ChatRoomSelectorService } from '../services/chat-room-selector.service'
 export class ChatlistComponent implements OnInit, OnDestroy {
   @Input() renderInAside = false;
 
-  chatRooms$:Observable<ChatRoomItem[]>=of([]);
+  chatRooms$!: Observable<ChatRoomItem[]>
   loader = new InteractiveLoading();
+  searchTermChangeSubject = new Subject<string>();
+  searchTerm$ = this.searchTermChangeSubject.asObservable();
 
   constructor(
-    private _route:Router,
-    public appState:AppStateService,
-    private db:StoreService,
+    private _route: Router,
+    public appState: AppStateService,
+    private db: StoreService,
     private _chatRoomSelectorService: ChatRoomSelectorService,
-  ) { 
+  ) {
 
-    
+
   }
 
   ngOnInit(): void {
 
 
-    if(!this.renderInAside && this.appState.isViewPortLarge){
+    if (!this.renderInAside && this.appState.isViewPortLarge) {
       return;
     }
-    if(this.appState.userDocID){
 
-      this.chatRooms$ = this.appState.reloadRequired$
-      .pipe(
-        filter(val=> val===null || val===ReloadStatus.CHAT_LIST),
-        switchMap((_)=>{
-          if(this.appState.userDocID)
-            return this.loader.showLoaderUntilCompleted(
-              this.db.getChatRoomList(this.appState.userDocID)
-            );
-          return of([]);
-        }),
-      )
-       
 
-    }
+
+    // emit null fist then the search item value
+    const searchTerm$ = concat(
+      of(null),
+      this.searchTerm$.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+      ));
+
+    // since search term observable wont complete immediately
+    // thats whey we wrap loader.showLoaderUntilComplete function with data retrieve function
+    this.chatRooms$ = searchTerm$.pipe(
+      switchMap((value) => {
+        return this.loader.showLoaderUntilCompleted(
+          this.db.getChatRoomList(this.appState.userDocID || '', value)
+        )
+      }));
+
+
   }
 
 
-  activeRoom(room:ChatRoomItem){
-    console.log('emitRoomActive')
+  searchingForChatRoom(display_name: string) {
+    console.log('searching for chat room', display_name);
+    this.searchTermChangeSubject.next(display_name);
+  }
+
+
+  activeRoom(room: ChatRoomItem) {
     this._chatRoomSelectorService.setCurrentChatRoom(room);
-    
   }
 
   ngOnDestroy(): void {
-      console.log('emitRoomDestroy');
   }
 
 

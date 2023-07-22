@@ -28,17 +28,18 @@ export class StoreService {
     return this.http.post<User>(`${environment.api}/save-or-crate-user`, data);
   }
 
-  getChatRoomList(uid: string) {
-    if (!this.chatList$) {
+  getChatRoomList(uid: string, q_display_name: string | null) {
+    const params = q_display_name ? `?q=${q_display_name}` : '';
 
-      this.chatList$ = this.http.get<ChatRoomItem[]>(`${environment.api}/get-user-chat-rooms/${uid}`)
-        .pipe(shareReplay());
-    }
+
+    this.chatList$ = this.http.get<ChatRoomItem[]>(`${environment.api}/get-user-chat-rooms/${uid}${params}`)
+      .pipe(shareReplay());
+
 
     return this.chatList$;
   }
 
-  getChatRoom(uid: string, room_id: string):Observable<iGetChatRoomResponse> {
+  getChatRoom(uid: string, room_id: string): Observable<iGetChatRoomResponse> {
     return this.http.get<ChatRoomItem[]>(`${environment.api}/get-user-chat-room/${uid}/${room_id}`)
       .pipe(switchMap(res => {
         if (res.length < 1) {
