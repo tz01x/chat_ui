@@ -149,6 +149,7 @@ export class CreateGroupComponent implements OnInit, OnDestroy {
     this.groupNameCtrl.setValue(null);
     this.inputCtrl.setValue(null);
     event.preventDefault();
+    this._router.navigate(['/home/message']);
   }
 
 }
