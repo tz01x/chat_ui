@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
-import { concat, debounceTime, delay, distinctUntilChanged, filter, from, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, concat, debounceTime, delay, distinctUntilChanged, filter, from, map, Observable, of, retry, startWith, Subject, switchMap, tap } from 'rxjs';
 import { AddedFriends, AddUser, IChatRoom, ReloadStatus } from '../interfaces';
 import { InteractiveLoading } from '../loading';
 import { LoadingSpinerComponent } from '../loading-spiner/loading-spiner.component';
@@ -12,7 +12,7 @@ import { AppStateService } from '../services/app-state.service';
 import { StoreService } from '../services/store.service';
 import { ChatRoomSearchBarComponent } from '../components/chat-room-search-bar/chat-room-search-bar.component';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   standalone: true,
@@ -39,6 +39,7 @@ export class ChatlistComponent implements OnInit, OnDestroy {
   loader = new InteractiveLoading();
   searchTermChangeSubject = new Subject<string>();
   searchTerm$ = this.searchTermChangeSubject.asObservable();
+  refresh$ = new BehaviorSubject<boolean>(true);
 
   constructor(
     private _route: Router,
@@ -68,11 +69,17 @@ export class ChatlistComponent implements OnInit, OnDestroy {
 
     // since search term observable wont complete immediately
     // thats whey we wrap loader.showLoaderUntilComplete function with data retrieve function
-    this.chatRooms$ = searchTerm$.pipe(
-      switchMap((value) => {
+    this.chatRooms$ = combineLatest([this.refresh$.pipe(debounceTime(400)), searchTerm$]).pipe(
+      switchMap(([_, value]) => {
         return this.loader.showLoaderUntilCompleted(
           this.db.getChatRoomList(this.appState.userDocID || '', value)
-        )
+            .pipe(
+              retry(3),
+              catchError((err) => {
+              this.appState.networkErrorHandler(err);
+              return of([]);
+            })
+            ));
       }));
 
 
@@ -82,6 +89,10 @@ export class ChatlistComponent implements OnInit, OnDestroy {
   searchingForChatRoom(display_name: string) {
     console.log('searching for chat room', display_name);
     this.searchTermChangeSubject.next(display_name);
+  }
+
+  refreshChatRoomList() {
+    this.refresh$.next(true);
   }
 
   ngOnDestroy(): void {

@@ -6,7 +6,7 @@
 <ng-template #elseBlock>
    <div class="additonal-items">
 
-      <button  mat-icon-button matTooltip="Refresh list" matTooltipPosition="above">
+      <button  mat-icon-button (click)="refreshChatRoomList()" matTooltip="Refresh list" matTooltipPosition="above">
          <mat-icon>refresh</mat-icon>
       </button>
       
