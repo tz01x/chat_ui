@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap, BehaviorSubject, filter } from 'rxjs';
 import { StoreService } from '../services/store.service';
-import { FriendsListItem, NotificationType, ReloadStatus, User, UserListItem } from '../interfaces';
+import { FriendsListItem, IAcceptedFriend, NotificationType, ReloadStatus, User, UserListItem } from '../interfaces';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
@@ -38,7 +38,7 @@ export class AllFirendsComponent implements OnInit {
 
   searchFormControl: FormControl;
 
-  private allFriendsSubject = new BehaviorSubject<FriendsListItem[]>([]);
+  private allFriendsSubject = new BehaviorSubject<IAcceptedFriend[]>([]);
   public allFriendsList$ = this.allFriendsSubject.asObservable();
 
   private requestedFriendsSubject = new BehaviorSubject<FriendsListItem[]>([]);

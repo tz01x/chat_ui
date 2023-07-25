@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, shareReplay } from 'rxjs';
-import { ChatRoomItem } from '../interfaces';
+import { IChatRoom } from '../interfaces';
 
 
 @Injectable({
@@ -8,15 +8,15 @@ import { ChatRoomItem } from '../interfaces';
 })
 export class ChatRoomSelectorService {
 
-  #selectedRoom$ = new ReplaySubject<ChatRoomItem|null>();
+  #selectedRoom$ = new ReplaySubject<IChatRoom|null>();
 
   constructor() { }
 
-  setCurrentChatRoom(room: ChatRoomItem|null) {
+  setCurrentChatRoom(room: IChatRoom|null) {
     this.#selectedRoom$.next(room);
   }
 
-  getSelectedRoomObservable(): Observable<ChatRoomItem|null> {
+  getSelectedRoomObservable(): Observable<IChatRoom|null> {
     return this.#selectedRoom$.asObservable();
   }
 

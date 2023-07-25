@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { from, of, Observable, map, catchError, EMPTY, tap, share, throwError, first, retry, shareReplay, switchMap } from 'rxjs';
+import { from, of, Observable, map, catchError, EMPTY, tap, share, throwError, first, retry, shareReplay, switchMap, ignoreElements } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AddedFriends, ApiResults, ChatRoomItem, FriendsListItem, iGetChatRoomResponse, iMessage, User, UserListItem } from '../interfaces';
+import { AddedFriends, ApiResults, IChatRoom, FriendsListItem, IAcceptedFriend, IGetChatRoomResponse, iMessage, User, UserListItem } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
 export class StoreService {
   userCollection: any = null;
-  chatList$!: Observable<ChatRoomItem[]>;
+  chatList$!: Observable<IChatRoom[]>;
   constructor(private http: HttpClient) {
   }
 
@@ -32,15 +32,15 @@ export class StoreService {
     const params = q_display_name ? `?q=${q_display_name}` : '';
 
 
-    this.chatList$ = this.http.get<ChatRoomItem[]>(`${environment.api}/get-user-chat-rooms/${uid}${params}`)
+    this.chatList$ = this.http.get<IChatRoom[]>(`${environment.api}/get-user-chat-rooms/${uid}${params}`)
       .pipe(shareReplay());
 
 
     return this.chatList$;
   }
 
-  getChatRoom(uid: string, room_id: string): Observable<iGetChatRoomResponse> {
-    return this.http.get<ChatRoomItem[]>(`${environment.api}/get-user-chat-room/${uid}/${room_id}`)
+  getChatRoom(uid: string, room_id: string): Observable<IGetChatRoomResponse> {
+    return this.http.get<IChatRoom[]>(`${environment.api}/get-user-chat-room/${uid}/${room_id}`)
       .pipe(switchMap(res => {
         if (res.length < 1) {
           return of({ found: false, chatRoom: Object() });
@@ -65,7 +65,7 @@ export class StoreService {
     if (!uid)
       return of([])
 
-    return this.http.get<ApiResults<FriendsListItem>>
+    return this.http.get<ApiResults<IAcceptedFriend>>
       (`${environment.api}/get-all-friends/${uid}?q=${query}&limit=${limit}&offset=${offset}`)
       .pipe(map(data => {
         return data.results
@@ -114,5 +114,9 @@ export class StoreService {
       tap((val) => {
         console.log(val);
       }));
+  }
+
+  create_group(data:any){
+    return this.http.post<IChatRoom>(`${environment.api}/create-group`, data)
   }
 }

@@ -5,12 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
 import { concat, debounceTime, delay, distinctUntilChanged, filter, from, map, Observable, of, startWith, Subject, switchMap, tap } from 'rxjs';
-import { AddedFriends, AddUser, ChatRoomItem, ReloadStatus } from '../interfaces';
+import { AddedFriends, AddUser, IChatRoom, ReloadStatus } from '../interfaces';
 import { InteractiveLoading } from '../loading';
 import { LoadingSpinerComponent } from '../loading-spiner/loading-spiner.component';
 import { AppStateService } from '../services/app-state.service';
 import { StoreService } from '../services/store.service';
-import { ChatRoomSelectorService } from '../services/chat-room-selector.service';
 import { ChatRoomSearchBarComponent } from '../components/chat-room-search-bar/chat-room-search-bar.component';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -36,7 +35,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 export class ChatlistComponent implements OnInit, OnDestroy {
   @Input() renderInAside = false;
 
-  chatRooms$!: Observable<ChatRoomItem[]>
+  chatRooms$!: Observable<IChatRoom[]>
   loader = new InteractiveLoading();
   searchTermChangeSubject = new Subject<string>();
   searchTerm$ = this.searchTermChangeSubject.asObservable();
@@ -45,7 +44,6 @@ export class ChatlistComponent implements OnInit, OnDestroy {
     private _route: Router,
     public appState: AppStateService,
     private db: StoreService,
-    private _chatRoomSelectorService: ChatRoomSelectorService,
   ) {
 
 
@@ -84,11 +82,6 @@ export class ChatlistComponent implements OnInit, OnDestroy {
   searchingForChatRoom(display_name: string) {
     console.log('searching for chat room', display_name);
     this.searchTermChangeSubject.next(display_name);
-  }
-
-
-  activeRoom(room: ChatRoomItem) {
-    this._chatRoomSelectorService.setCurrentChatRoom(room);
   }
 
   ngOnDestroy(): void {

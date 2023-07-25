@@ -25,6 +25,12 @@ export interface FriendsListItem {
 
 }
 
+export interface IAcceptedFriend{
+    displayName: string
+    photoURL: string
+    uid: string
+}
+
 export interface AddUser {
     displayName: string | null
     createdAt: string | number | null
@@ -84,15 +90,15 @@ export enum ReloadStatus {
     FRIEND_REQUEST = 4
 }
 
-export enum ChatRoomType {
+export enum IChatRoomType {
     PERSONAL = "PERSONAL",
     GROUP = "GROUP"
 }
 
-export interface ChatRoomItem {
+export interface IChatRoom {
     id: number;
     room_id: string;
-    type: ChatRoomType;
+    type: IChatRoomType;
     display_property: {
         displayName: string;
         photoURL: string;
@@ -100,9 +106,9 @@ export interface ChatRoomItem {
     last_message: string;
 }
 
-export interface iGetChatRoomResponse{
+export interface IGetChatRoomResponse{
     found: boolean;
-    chatRoom: ChatRoomItem;
+    chatRoom: IChatRoom;
 }
 
 

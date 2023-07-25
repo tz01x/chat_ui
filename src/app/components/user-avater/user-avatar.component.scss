@@ -21,10 +21,10 @@ gap: 10px;
         overflow: hidden;
         display: grid;
         place-items: center;
-
         img {
             width: 100%;
             object-fit: contain;
+            background: rgb(19, 19, 19);
         }
     }
 

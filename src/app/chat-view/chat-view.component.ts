@@ -1,7 +1,7 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription } from 'rxjs';
-import { AddUser, ChatRoomItem, iGetChatRoomResponse, iMessage, User } from '../interfaces';
+import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
 import { ChatSocket, chatSocketFactory } from '../services/sockets/chat-socket';
@@ -13,7 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollDirective } from '../infinite-scroll.directive';
-import { ChatRoomSelectorService } from '../services/chat-room-selector.service';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
 
 @Component({
@@ -46,13 +45,12 @@ export class ChatViewComponent implements OnInit, OnDestroy{
   isNextPageAvailable = true;
   activeUserStatus$!: Observable<boolean>;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  chatRoomSelector$ = this._chatRoomSelectorService.getSelectedRoomObservable();
   subscriptions: Subscription[] = [];
 
 
   @ViewChild('scroll', { static: true }) scroll: any;
 
-  currentChatRoom$!: Observable<iGetChatRoomResponse>;
+  currentChatRoom$!: Observable<IGetChatRoomResponse>;
 
 
 
@@ -62,7 +60,6 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     public _chatService: ChatService,
     public _appState: AppStateService,
     private _db: StoreService,
-    private _chatRoomSelectorService: ChatRoomSelectorService,
 
   )  {
 
@@ -220,7 +217,6 @@ export class ChatViewComponent implements OnInit, OnDestroy{
   ngOnDestroy(): void {
     this.chatSocket?.close();
     this.destroy$.next(true);
-    this._chatRoomSelectorService.setCurrentChatRoom(null);
     this.messageListSubject$.unsubscribe();
     this.destroy$.unsubscribe()
     this.subscriptions.forEach((sub) => {

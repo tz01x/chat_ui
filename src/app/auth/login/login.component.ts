@@ -90,9 +90,9 @@ export class LoginComponent implements OnInit {
       error:(err)=>{
         const {status} = err;
         if(status != undefined  && status==0){
-          this.appState.showError('Connection Error');
+          this.appState.showErrorNotification('Connection Error');
         }else{
-          this.appState.showError('Error Occurs');
+          this.appState.showErrorNotification('Error Occurs');
         }
       },
       complete:()=>{
