@@ -1,5 +1,15 @@
 .chat-view-section{
     position: relative;
+    // display: flex;
+}
+
+.main-content{
+    flex-basis: 100%;
+}
+
+.sidenav{
+    max-width: 320px;
+    width: 100%;
 }
 
 .nav{

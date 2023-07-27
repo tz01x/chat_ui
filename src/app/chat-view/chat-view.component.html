@@ -1,47 +1,69 @@
-<section [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async)}">
+<section
+    [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async),isViewPortLarge:_appState.isViewPortLarge}">
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
         Can not connect to server
     </div>
 
-    <nav class="nav">
-        <div class="nav-part-1">
-            <ng-container *ngIf="!_appState.isViewPortLarge">
-                <button mat-icon-button aria-label="go back button" (click)="goBack()">
-                    <mat-icon>arrow_back</mat-icon>
-                </button>
-            </ng-container>
-            <div *ngIf="currentChatRoom$ |async as room" style="display: grid;">
-                <button mat-button>
-                    <app-user-avatar [displayName]="room.chatRoom.display_property.displayName"
-                        [photoURL]="room.chatRoom.display_property.photoURL">
-                    </app-user-avatar>
-                </button>
+    <mat-drawer-container autosize>
+
+        <mat-drawer-content>
+
+
+
+            <div class="main-content">
+
+
+
+                <nav class="nav">
+                    <div class="nav-part-1">
+                        <ng-container *ngIf="!_appState.isViewPortLarge">
+                            <button mat-icon-button aria-label="go back button" (click)="goBack()">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                        </ng-container>
+                        <div *ngIf="currentChatRoom$ |async as room" style="display: grid;">
+                            <button mat-button>
+                                <app-user-avatar [imageWidth]="50" [displayName]="room.chatRoom.display_property.displayName"
+                                    [photoURL]="room.chatRoom.display_property.photoURL">
+                                </app-user-avatar>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="nav-part-2">
+
+                        <button mat-icon-button (click)="openInfoPanel()">
+                            <mat-icon>info</mat-icon>
+                        </button>
+                    </div>
+                </nav>
+
+
+                <main class="chat-view-body">
+                    <div class="message-list" appInfiniteScroll (scrollingUp)="onScrollUp()"
+                        [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200" #scroll>
+                        <app-chat-bubble #messages *ngFor="let msg of (messageListSubject$ | async); let last = last;"
+                            [owner]="msg.user?.uid == _appState.user?.uid" [timeStamp]="1221" [message]="msg"
+                            [isLast]="last" (lastComponentViewRender)="lastComponentViewRender()"></app-chat-bubble>
+
+                    </div>
+                    <div class="input-section">
+                        <input type="text" class="input-field" [(ngModel)]="textMessage"
+                            (keydown)="sendMessage($event)">
+
+                        <button mat-raised-button color="primary" class="send-button" (click)="sendMessage($event)">
+                            <mat-icon>send</mat-icon>
+                        </button>
+                    </div>
+
+                </main>
             </div>
-        </div>
-        <div class="nav-part-2">
 
-            <button mat-icon-button>
-                <mat-icon>info</mat-icon>
-            </button>
-        </div>
-    </nav>
+        </mat-drawer-content>
 
+        <mat-drawer [opened]="drawer" (closed)="this.drawer=false" mode="side" position="end" class="sidenav">
+            <app-chat-room-info [chatRoom]="(currentChatRoom$|async)!.chatRoom"></app-chat-room-info>
+        </mat-drawer>
 
-    <main class="chat-view-body">
-        <div class="message-list" appInfiniteScroll (scrollingUp)="onScrollUp()"
-            [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200" #scroll>
-            <app-chat-bubble #messages *ngFor="let msg of (messageListSubject$ | async); let last = last;"
-                [owner]="msg.user?.uid == _appState.user?.uid" [timeStamp]="1221" [message]="msg" [isLast]="last"
-                (lastComponentViewRender)="lastComponentViewRender()"></app-chat-bubble>
+    </mat-drawer-container>
 
-        </div>
-        <div class="input-section">
-            <input type="text" class="input-field" [(ngModel)]="textMessage" (keydown)="sendMessage($event)">
-
-            <button mat-raised-button color="primary" class="send-button" (click)="sendMessage($event)">
-                <mat-icon>send</mat-icon>
-            </button>
-        </div>
-
-    </main>
 </section>

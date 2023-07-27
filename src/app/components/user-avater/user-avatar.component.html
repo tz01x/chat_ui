@@ -1,8 +1,11 @@
-<div class="avatar-item">
-    <div class="avater-img">
-       <img [src]="photoURL" alt="" srcset="">
-    </div>
-    <p>
-       {{displayName}}
-    </p>
- </div>
+<div [attr.data-direction]="direction">
+
+   <div class="avatar-item">
+      <div class="avatar-img" [ngStyle]="{'width.px':imageWidth}">
+         <img [src]="photoURL" alt="" srcset="">
+      </div>
+      <p>
+         {{displayName}}
+      </p>
+   </div>
+</div>

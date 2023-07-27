@@ -1,0 +1,25 @@
+.content{
+    padding: 1em 1em 0 1em;
+    // height: 100vh;
+    // overflow-y: scroll;
+}
+
+.chat-info-body{
+    margin-top: 1.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    h5{
+        font-size: 1em;
+        font-weight: 200;
+    }
+
+    
+}
+
+button{
+    font-weight: 200;
+    width: 100%;
+    text-align: left;
+}

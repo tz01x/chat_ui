@@ -1,0 +1,15 @@
+<section class="content">
+    <div class="info">
+        <app-user-avatar [imageWidth]="80" direction="vertical" [displayName]="chatRoom.display_property.displayName"
+            [photoURL]="chatRoom.display_property.photoURL"></app-user-avatar>
+    </div>
+    <div class="chat-info-body">
+        <h5>Info</h5>
+        <button mat-flat-button>See Members</button>
+        <button mat-flat-button>Report</button>
+        
+        <button *ngIf="chatRoom.type=='GROUP'" mat-flat-button>Leave Group</button>
+        
+
+    </div>
+</section>

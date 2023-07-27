@@ -1,5 +1,4 @@
 import { Routes } from "@angular/router";
-import { HomeComponent } from "./home.component";
 
 export const HomeRoutes: Routes = [
     {
@@ -17,7 +16,7 @@ export const HomeRoutes: Routes = [
             },
             {
                 path: 'message/:chatRoomId/:roomId',
-                loadComponent: () => import('../chat-view/chat-view.component').then(c => c.ChatViewComponent)
+                loadComponent: () => import('../chat-view/chat-view.component').then(c => c.ChatViewComponent),
             },
             {
                 path: 'add-friends',

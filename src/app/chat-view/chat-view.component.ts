@@ -1,5 +1,5 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription } from 'rxjs';
 import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
@@ -14,6 +14,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { InfiniteScrollDirective } from '../infinite-scroll.directive';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { ChatRoomInfoComponent } from '../chat-room-info/chat-room-info.component';
 
 @Component({
   standalone: true,
@@ -25,6 +27,9 @@ import { UserAvaterComponent } from '../components/user-avater/user-avatar.compo
     FormsModule,
     InfiniteScrollDirective,
     UserAvaterComponent,
+    RouterModule,
+    MatSidenavModule,
+    ChatRoomInfoComponent,
   ],
   selector: 'app-chat-view',
   templateUrl: './chat-view.component.html',
@@ -46,6 +51,7 @@ export class ChatViewComponent implements OnInit, OnDestroy{
   activeUserStatus$!: Observable<boolean>;
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscriptions: Subscription[] = [];
+  drawer = false;
 
 
   @ViewChild('scroll', { static: true }) scroll: any;
@@ -213,6 +219,10 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     this.loadAllMessages();
   }
 
+  openInfoPanel(){
+    this.drawer = !this.drawer;
+    console.log(this.drawer);
+  }
 
   ngOnDestroy(): void {
     this.chatSocket?.close();
