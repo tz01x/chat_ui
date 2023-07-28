@@ -1,15 +1,24 @@
-<section class="content">
-    <div class="info">
-        <app-user-avatar [imageWidth]="80" direction="vertical" [displayName]="chatRoom.display_property.displayName"
-            [photoURL]="chatRoom.display_property.photoURL"></app-user-avatar>
-    </div>
-    <div class="chat-info-body">
-        <h5>Info</h5>
-        <button mat-flat-button>See Members</button>
-        <button mat-flat-button>Report</button>
-        
-        <button *ngIf="chatRoom.type=='GROUP'" mat-flat-button>Leave Group</button>
-        
+<mat-drawer-container class="container">
+    <mat-drawer-content class="content">
 
-    </div>
-</section>
+        <div class="info">
+            <app-user-avatar [imageWidth]="80" direction="vertical" [displayName]="chatRoom.display_property.displayName"
+            [photoURL]="chatRoom.display_property.photoURL"></app-user-avatar>
+        </div>
+        <div class="chat-info-body">
+            <h5>Info</h5>
+            <button mat-button (click)="openPage('see-members')">See Members</button>
+            <button mat-button>Report</button>
+            <button *ngIf="chatRoom.type=='GROUP'" mat-button>Leave Group</button>
+        </div>
+    </mat-drawer-content>
+
+    <mat-drawer position="end" [opened]="isPageOpen" class="side-page-content" >
+        <div class="nav-panel">
+            <button mat-button color="warn" (click)="isPageOpen=false" style="text-align: center;font-weight: 700;"><</button>
+        </div>
+        <div class="side-body">
+            <app-members-list [chatRoomType]="chatRoom.type" [roomId]="chatRoom.room_id"></app-members-list>
+        </div>
+    </mat-drawer>
+</mat-drawer-container>

@@ -25,7 +25,7 @@ export interface FriendsListItem {
 
 }
 
-export interface IAcceptedFriend{
+export interface IAcceptedFriend {
     displayName: string
     photoURL: string
     uid: string
@@ -95,6 +95,12 @@ export enum IChatRoomType {
     GROUP = "GROUP"
 }
 
+export enum IMemberRole{
+    CREATOR = 'CREATOR',
+    ADMIN = 'ADMIN',
+    REGULAR = 'REGULAR',
+}
+
 export interface IChatRoom {
     id: number;
     room_id: string;
@@ -106,11 +112,26 @@ export interface IChatRoom {
     last_message: string;
 }
 
-export interface IGetChatRoomResponse{
+export interface IGetChatRoomResponse {
     found: boolean;
     chatRoom: IChatRoom;
 }
 
+export interface IMembers {
+    id: number;
+    role: IMemberRole;
+    createdAt: string;
+    user: {
+        displayName: string
+        photoURL: string
+        uid: string
+    }
+}
+
+export interface IMembersSplitter{
+    others: IMembers[];
+    current: IMembers;
+}
 
 export interface Notification {
     content: string

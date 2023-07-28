@@ -1,0 +1,17 @@
+
+
+.member-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0.5em 1em;
+}
+
+.member-item{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}

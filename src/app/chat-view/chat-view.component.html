@@ -1,5 +1,7 @@
 <section
-    [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async),isViewPortLarge:_appState.isViewPortLarge}">
+    [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async),isViewPortLarge:_appState.isViewPortLarge}"
+    *ngIf="(currentChatRoom$|async) as currentChatRoom"
+>
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
         Can not connect to server
     </div>
@@ -21,10 +23,10 @@
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                         </ng-container>
-                        <div *ngIf="currentChatRoom$ |async as room" style="display: grid;">
+                        <div  style="display: grid;">
                             <button mat-button>
-                                <app-user-avatar [imageWidth]="50" [displayName]="room.chatRoom.display_property.displayName"
-                                    [photoURL]="room.chatRoom.display_property.photoURL">
+                                <app-user-avatar [imageWidth]="50" [displayName]="currentChatRoom.chatRoom.display_property.displayName"
+                                    [photoURL]="currentChatRoom.chatRoom.display_property.photoURL">
                                 </app-user-avatar>
                             </button>
                         </div>
@@ -61,7 +63,7 @@
         </mat-drawer-content>
 
         <mat-drawer [opened]="drawer" (closed)="this.drawer=false" mode="side" position="end" class="sidenav">
-            <app-chat-room-info [chatRoom]="(currentChatRoom$|async)!.chatRoom"></app-chat-room-info>
+            <app-chat-room-info [chatRoom]="currentChatRoom.chatRoom"></app-chat-room-info>
         </mat-drawer>
 
     </mat-drawer-container>

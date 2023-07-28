@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 import { from, of, Observable, map, catchError, EMPTY, tap, share, throwError, first, retry, shareReplay, switchMap, ignoreElements } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AddedFriends, ApiResults, IChatRoom, FriendsListItem, IAcceptedFriend, IGetChatRoomResponse, iMessage, User, UserListItem } from '../interfaces';
+import { AddedFriends, ApiResults, IChatRoom, FriendsListItem, IAcceptedFriend, IGetChatRoomResponse, iMessage, User, UserListItem, IMembers, IMembersSplitter } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
@@ -118,5 +118,9 @@ export class StoreService {
 
   create_group(data:any){
     return this.http.post<IChatRoom>(`${environment.api}/create-group`, data)
+  }
+
+  getChatRoomMembers(roomId:string,uid:string){
+    return this.http.get<IMembersSplitter>(`${environment.api}/get-chat-room-members/${roomId}/${uid}`);
   }
 }
