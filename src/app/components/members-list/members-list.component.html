@@ -1,24 +1,26 @@
-<mat-tab-group class="material-tab-grp" [disablePagination]="true" >
-        <mat-tab label="Members" >
-            <section>
-                <div class="member-list" *ngIf="members$ | async as members ">
-                    <div class="member-item">
-                        <app-user-avatar [imageWidth]="40" [photoURL]="members.current.user.photoURL"
-                            [displayName]="members.current.user.displayName" style="width:100%;"></app-user-avatar>
-                    </div>
-                    <div class="member-item" *ngFor="let member of members.others">
-                        <app-user-avatar [imageWidth]="40" [photoURL]="member.user.photoURL" [displayName]="member.user.displayName"
-                            style="width:100%;"></app-user-avatar>
-                        <button
-                            *ngIf="chatRoomType == 'GROUP' && (members.current.role=='CREATOR' || members.current.role=='ADMIN')"
-                            mat-icon-button color="warn" [matTooltip]="'kick out'">
-                            <mat-icon>person_remove</mat-icon>
-                        </button>
-                    </div>
+<mat-tab-group class="material-tab-grp" [disablePagination]="true" *ngIf="chatRoom$|async as chatRoom">
+    <mat-tab label="Members">
+        <section>
+            <div class="member-list" *ngIf="members$ | async as members ">
+                <div class="member-item">
+                    <app-user-avatar [imageWidth]="40" [photoURL]="members.current.user.photoURL"
+                        [displayName]="members.current.user.displayName" style="width:100%;"></app-user-avatar>
                 </div>
-            </section>
-        </mat-tab>
-        <mat-tab label="Add">
-            Add Members to chat
-        </mat-tab>
+                <div class="member-item" *ngFor="let member of members.others">
+                    <app-user-avatar [imageWidth]="40" [photoURL]="member.user.photoURL"
+                        [displayName]="member.user.displayName" style="width:100%;"></app-user-avatar>
+                    <button
+                        *ngIf="chatRoom.type == 'GROUP' && (members.current.role=='CREATOR' || members.current.role=='ADMIN')"
+                        mat-icon-button color="warn" [matTooltip]="'kick out'"
+                        (click)="removeMember(member.user.uid)"
+                    >
+                        <mat-icon>person_remove</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </mat-tab>
+    <mat-tab label="Add" *ngIf="chatRoom.type=='GROUP'">
+        <app-add-members-to-grp></app-add-members-to-grp>
+    </mat-tab>
 </mat-tab-group>

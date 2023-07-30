@@ -16,6 +16,7 @@ import { InfiniteScrollDirective } from '../infinite-scroll.directive';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ChatRoomInfoComponent } from '../chat-room-info/chat-room-info.component';
+import { ChatRoomService } from '../services/chatroom.service';
 
 @Component({
   standalone: true,
@@ -35,7 +36,7 @@ import { ChatRoomInfoComponent } from '../chat-room-info/chat-room-info.componen
   templateUrl: './chat-view.component.html',
   styleUrls: ['./chat-view.component.scss'],
 })
-export class ChatViewComponent implements OnInit, OnDestroy{
+export class ChatViewComponent implements OnInit, OnDestroy {
   chatRoomId: string | null = null;
   roomId: string | null = null;
   textMessage: string | null = null;
@@ -56,7 +57,7 @@ export class ChatViewComponent implements OnInit, OnDestroy{
 
   @ViewChild('scroll', { static: true }) scroll: any;
 
-  currentChatRoom$!: Observable<IGetChatRoomResponse>;
+  currentChatRoom$ = this._chatRoomService.getChatRoom();
 
 
 
@@ -66,25 +67,26 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     public _chatService: ChatService,
     public _appState: AppStateService,
     private _db: StoreService,
+    private _chatRoomService: ChatRoomService
 
-  )  {
+  ) {
 
     // this.subscriptions.push(
     //   this._Activatedroute.paramMap
     //     .subscribe((params) => {
-          
-          
+
+
     //       this.onRouteChange(params, val);
-           
+
 
     //     })
     // );
-      
-      this.subscriptions.push(
+
+    this.subscriptions.push(
       combineLatest([this._Activatedroute.paramMap])
-      .subscribe(([params])=>{
-        this.onRouteChange(params);
-      }));
+        .subscribe(([params]) => {
+          this.onRouteChange(params);
+        }));
   }
 
   ngOnInit(): void {
@@ -98,22 +100,27 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     this.roomId = params.get('roomId');
     this.chatRoomId = params.get('chatRoomId');
     // this.displayName = chatRoom?.display_property.displayName || '';
-    
-    
+
+
     if (!this.roomId || !this.chatRoomId || !this._appState.userDocID) {
       return
     }
-    
-    this.currentChatRoom$ = this._db.getChatRoom(this._appState.userDocID,this.roomId)
-    .pipe(
-      tap((room)=>{
-        if(!room.found) {
-          this._router.navigate(['/home']);
-          this._appState.showNonfiction('Does not exist');
-        }
 
+    this._db.getChatRoom(this._appState.userDocID, this.roomId)
+      .pipe(
+        takeUntil(this.destroy$),
+        tap((room) => {
+          if (!room.found) {
+            this._router.navigate(['/home']);
+            this._appState.showNonfiction('Does not exist');
+          }
+
+        }),
+      ).subscribe(room => {
+        if (room.found) {
+          this._chatRoomService.setChatRoom(room.chatRoom);
+        }
       })
-    )
 
 
 
@@ -121,10 +128,10 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     this.isNextPageAvailable = true;
     this.apiLimit = 50;
     this.apiOffset = 0;
-  
+
     this.messageListSubject$.next([]);
     this.loadAllMessages();
-  
+
     this.chatSocket = this.constructSocket();
     this.chatSocket.setRoom(this._appState.userDocID, this.roomId, this.chatRoomId);
     this.chatSocket.getUserStatus(this.chatRoomId);
@@ -219,7 +226,7 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     this.loadAllMessages();
   }
 
-  openInfoPanel(){
+  openInfoPanel() {
     this.drawer = !this.drawer;
     console.log(this.drawer);
   }
@@ -234,7 +241,7 @@ export class ChatViewComponent implements OnInit, OnDestroy{
     })
   }
 
-  
+
 
 
 }

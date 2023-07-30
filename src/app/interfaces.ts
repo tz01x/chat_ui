@@ -1,3 +1,5 @@
+import { Observable } from "rxjs"
+
 export interface User {
     email: string | null
     displayName: string | null
@@ -146,4 +148,14 @@ export enum NotificationType {
     MESSAGE = 'message',
     NOTIFY = 'notify',
     ERROR = 'error'
+}
+
+export interface IBaseResponse{
+    detail: string;
+    error?: boolean;
+}
+
+export interface IMultiSelectFilterService{
+    clearSelection$: Observable<any>; 
+    filterBySearchTerm:(searchTerm:string)=>Observable<IAcceptedFriend[]>;
 }

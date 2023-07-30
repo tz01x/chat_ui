@@ -25,8 +25,8 @@
                         </ng-container>
                         <div  style="display: grid;">
                             <button mat-button>
-                                <app-user-avatar [imageWidth]="50" [displayName]="currentChatRoom.chatRoom.display_property.displayName"
-                                    [photoURL]="currentChatRoom.chatRoom.display_property.photoURL">
+                                <app-user-avatar [imageWidth]="50" [displayName]="currentChatRoom.display_property.displayName"
+                                    [photoURL]="currentChatRoom.display_property.photoURL">
                                 </app-user-avatar>
                             </button>
                         </div>
@@ -63,7 +63,7 @@
         </mat-drawer-content>
 
         <mat-drawer [opened]="drawer" (closed)="this.drawer=false" mode="side" position="end" class="sidenav">
-            <app-chat-room-info [chatRoom]="currentChatRoom.chatRoom"></app-chat-room-info>
+            <app-chat-room-info></app-chat-room-info>
         </mat-drawer>
 
     </mat-drawer-container>

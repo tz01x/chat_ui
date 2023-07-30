@@ -1,0 +1,6 @@
+<section >
+    <app-multi-select-component 
+    fieldLabel="Select People"
+    (selected_uid)="selectedMembers($event)"></app-multi-select-component>
+    <button color="primary" mat-flat-button [disabled]="selectedUids.length<=0" (click)="addMember()">Add to Group</button>
+</section>

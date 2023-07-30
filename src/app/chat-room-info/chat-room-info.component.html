@@ -1,4 +1,4 @@
-<mat-drawer-container class="container">
+<mat-drawer-container *ngIf="(chatRoom$ | async) as chatRoom" class="container">
     <mat-drawer-content class="content">
 
         <div class="info">
@@ -18,7 +18,7 @@
             <button mat-button color="warn" (click)="isPageOpen=false" style="text-align: center;font-weight: 700;"><</button>
         </div>
         <div class="side-body">
-            <app-members-list [chatRoomType]="chatRoom.type" [roomId]="chatRoom.room_id"></app-members-list>
+            <app-members-list></app-members-list>
         </div>
     </mat-drawer>
 </mat-drawer-container>
