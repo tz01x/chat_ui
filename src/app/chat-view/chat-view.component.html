@@ -1,43 +1,71 @@
-<section [ngClass]="{'chat-view-section':true,darkMode:(appState.darkMode$|async)}">
+<section
+    [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async),isViewPortLarge:_appState.isViewPortLarge}"
+    *ngIf="(currentChatRoom$|async) as currentChatRoom"
+>
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
         Can not connect to server
     </div>
-  <nav class="nav">
-    <button mat-icon-button aria-label="go back button" (click)="goBack()"> 
-        <mat-icon>arrow_back</mat-icon>
-    </button>
-    <div class="username-placeholder" [attr.data-active]="activeUserStatus$ | async">
-        <span>{{otherPerson?.displayName}}</span>
-    </div>
-    <button mat-icon-button >
-        <mat-icon>info</mat-icon>
-    </button>
-  </nav>
-  <main class="chat-view-body"  >
-        <div 
-        class="message-list"
-        appInfiniteScroll
-        (scrollingUp)="onScrollUp()"
-        [restThrottleDistancePointObservable]="restDistancePointer"
-        [throttleDistance]="200"
-        #scroll 
-        >
-            <app-chat-bubble   #messages *ngFor="let msg of (messageList$ | async); let last = last;"
-            [owner]="msg.from_uid == appState.user?.uid" 
-            [timeStamp]="1221"
-            [textMessage]="msg.content"
-            [isLast]="last"
-            (lastComponentViewRender)="lastComponentViewRender()"
-            ></app-chat-bubble>
-            
-        </div>
-        <div class="input-section">
-            <input type="text" class="input-field" [(ngModel)]="textMessage" (keydown)="sendMessage($event)" >
-        
-              <button mat-raised-button  color="primary" class="send-button" (click)="sendMessage($event)">
-                <mat-icon>send</mat-icon>
-            </button>
-        </div>
 
-  </main>
+    <mat-drawer-container autosize>
+
+        <mat-drawer-content>
+
+
+
+            <div class="main-content">
+
+
+
+                <nav class="nav">
+                    <div class="nav-part-1">
+                        <ng-container *ngIf="!_appState.isViewPortLarge">
+                            <button mat-icon-button aria-label="go back button" (click)="goBack()">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                        </ng-container>
+                        <div  style="display: grid;">
+                            <button mat-button>
+                                <app-user-avatar [imageWidth]="50" [displayName]="currentChatRoom.display_property.displayName"
+                                    [photoURL]="currentChatRoom.display_property.photoURL">
+                                </app-user-avatar>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="nav-part-2">
+
+                        <button mat-icon-button (click)="openInfoPanel()">
+                            <mat-icon>info</mat-icon>
+                        </button>
+                    </div>
+                </nav>
+
+
+                <main class="chat-view-body">
+                    <div class="message-list" appInfiniteScroll (scrollingUp)="onScrollUp()"
+                        [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200" #scroll>
+                        <app-chat-bubble #messages *ngFor="let msg of (messageListSubject$ | async); let last = last;"
+                            [owner]="msg.user?.uid == _appState.user?.uid" [timeStamp]="1221" [message]="msg"
+                            [isLast]="last" (lastComponentViewRender)="lastComponentViewRender()"></app-chat-bubble>
+
+                    </div>
+                    <div class="input-section">
+                        <input type="text" class="input-field" [(ngModel)]="textMessage"
+                            (keydown)="sendMessage($event)">
+
+                        <button mat-raised-button color="primary" class="send-button" (click)="sendMessage($event)">
+                            <mat-icon>send</mat-icon>
+                        </button>
+                    </div>
+
+                </main>
+            </div>
+
+        </mat-drawer-content>
+
+        <mat-drawer [opened]="drawer" (closed)="this.drawer=false" mode="side" position="end" class="sidenav">
+            <app-chat-room-info></app-chat-room-info>
+        </mat-drawer>
+
+    </mat-drawer-container>
+
 </section>

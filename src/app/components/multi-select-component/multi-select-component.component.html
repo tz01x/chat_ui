@@ -1,0 +1,18 @@
+<mat-form-field class="example-chip-list">
+    <mat-label>{{fieldLabel}}</mat-label>
+    <mat-chip-list #chipGrid aria-label="Friends selection">
+        <mat-chip *ngFor="let item of items|async; let i = index" (removed)="remove(i)" style="padding-left: 0;">
+            <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
+            <button matChipRemove [attr.aria-label]="'remove ' + item.displayName">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-chip>
+    </mat-chip-list>
+    <input placeholder="Enter Name ..." #friendsInput [formControl]="inputCtrl" [matChipInputFor]="chipGrid"
+        [matAutocomplete]="auto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" />
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-option *ngFor="let item of filteredItems | async" [value]="item">
+            <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
+        </mat-option> 
+    </mat-autocomplete>
+</mat-form-field>

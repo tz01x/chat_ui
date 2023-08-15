@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import { AppStateService } from './services/app-state.service';
-import { Router } from '@angular/router';
+import { ChildrenOutletContexts, Router } from '@angular/router';
+import { slideInAnimation } from './animation';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'chat_ui';
@@ -24,7 +25,8 @@ export class AppComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     public appState:AppStateService,
-    private router:Router){
+    private router:Router,
+    ){
     
     breakpointObserver
       .observe([
@@ -39,6 +41,7 @@ export class AppComponent {
             }else{
               this.appState.isViewPortLarge = true;
             }
+            this.appState.reloadRequired$.next(null);
           }
         }
       });

@@ -1,0 +1,45 @@
+.avatar-item{
+    display: flex;
+    gap: 10px;
+
+    p {
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 90%;
+        text-align: start;
+    
+    }
+
+    .avatar-img {
+        border-radius: 50%;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        img {
+            width: 100%;
+            object-fit: contain;
+            background: rgb(19, 19, 19);
+        }
+    }
+}
+
+
+
+[data-direction="horizontal"]  .avatar-item{
+
+flex-direction: row ;
+align-items: center;
+
+
+}
+
+[data-direction="vertical"] .avatar-item{
+    flex-direction: column;
+    align-items: center;
+
+    p{
+        text-align: center;
+    }
+}

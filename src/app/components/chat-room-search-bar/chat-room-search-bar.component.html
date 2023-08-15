@@ -1,0 +1,20 @@
+<form [ngClass]="{'searchForm':true, 'darkMode':(appState.darkMode$ | async)}" (ngSubmit)="submitAction()">
+    <div class="search-field">
+
+        <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        placeholder="Search" 
+        aria-label="search"
+        (input)="submitAction()"
+        name="searchTerm"
+        (blur)="blurAction($event)"
+        (focus)="blurAction($event)"
+        autocomplete="off"
+        >
+
+        <mat-icon>search</mat-icon>
+    </div>
+        
+  </form>
+  
