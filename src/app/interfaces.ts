@@ -10,6 +10,17 @@ export interface User {
     other: string | null
 }
 
+export interface  ITokenizeUser{
+    access_token: string;
+    refresh_token: string;
+    user: User;
+}
+
+export  interface IToken{
+    access_token: string;
+    refresh_token: string;
+}
+
 export interface UserListItem {
     displayName: string
     photoURL: string | null

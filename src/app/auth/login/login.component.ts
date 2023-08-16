@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { User } from 'src/app/interfaces';
 import { InteractiveLoading } from 'src/app/loading';
+import { TokenService } from 'src/app/services/token.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
     public appState: AppStateService,
     public auth: Auth,
     private router: Router,
-    private db: StoreService
+    private db: StoreService,
+    private tokenService: TokenService
   ) { 
     this.interactiveLoading = new InteractiveLoading();
   }
@@ -70,7 +72,6 @@ export class LoginComponent implements OnInit {
 
     const obj = userCredential.user.toJSON() as any;
     const accessToken = obj?.stsTokenManager?.accessToken;
-
     this.interactiveLoading.showLoaderUntilCompleted(
       this.addUserToDB({
         email,
@@ -83,17 +84,13 @@ export class LoginComponent implements OnInit {
       })
     ).subscribe({
       next: (res) => {
-        const userRes = res as User;
-        this.appState.setUser(userRes);
-        this.appState.setUserDocID(userRes.uid);
+        this.tokenService.token = {access_token: res.access_token, refresh_token: res.refresh_token};
+        console.log(this.tokenService.token);
+        this.appState.setUser(res.user);
+        this.appState.setUserDocID(res.user.uid);
       },
       error:(err)=>{
-        const {status} = err;
-        if(status != undefined  && status==0){
-          this.appState.showErrorNotification('Connection Error');
-        }else{
-          this.appState.showErrorNotification('Error Occurs');
-        }
+        this.appState.networkErrorHandler(err);
       },
       complete:()=>{
         this.router.navigate(['home']);

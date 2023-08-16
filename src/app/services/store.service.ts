@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { from, of, Observable, map, catchError, EMPTY, tap, share, throwError, first, retry, shareReplay, switchMap, ignoreElements } from 'rxjs';
+import { of, Observable, map, tap, retry, shareReplay, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AddedFriends, ApiResults, IChatRoom, FriendsListItem, IAcceptedFriend, IGetChatRoomResponse, iMessage, User, UserListItem, IMembers, IMembersSplitter } from '../interfaces';
+import {  ApiResults, IChatRoom, FriendsListItem, IAcceptedFriend, IGetChatRoomResponse, iMessage, User, UserListItem, IMembersSplitter, ITokenizeUser } from '../interfaces';
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +25,7 @@ export class StoreService {
   }
 
   addUser(data: User) {
-    return this.http.post<User>(`${environment.api}/save-or-crate-user`, data);
+    return this.http.post<ITokenizeUser>(`${environment.api}/save-or-crate-user`, data);
   }
 
   getChatRoomList(uid: string, q_display_name: string | null) {

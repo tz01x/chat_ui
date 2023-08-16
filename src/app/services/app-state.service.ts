@@ -1,6 +1,5 @@
-import { ThisReceiver } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, Subject, switchMap, timer } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Notification, NotificationType, ReloadStatus, User } from '../interfaces';
 import { IndicatorService } from './indicator.service';
 import { NotificationService } from './notification.service';
@@ -20,7 +19,7 @@ export class AppStateService {
   expiration: Date | null = null;
   appDrawer = false;
   reloadRequired$ = new BehaviorSubject<number | null>(null);
-  socketConn = AppSocket.appSocketFactory();
+  socketConn = AppSocket.appSocketFactory(false);
 
   constructor(private notificationService: NotificationService, private indicator: IndicatorService) {
 
