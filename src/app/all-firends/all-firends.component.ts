@@ -55,21 +55,13 @@ export class AllFirendsComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueChangeHandler();
-    this.allFriendsList$ = this.appState.reloadRequired$
-    .pipe(
-      filter(value=>value==ReloadStatus.CHAT_LIST||value===null),
-      switchMap(value=>{
-        return this.db.getAllFriends(this.appState.userDocID, '');
-      })
-    ) ;
+    // TODO: need a auto refresh feature at particular action
+    this.allFriendsList$ =  this.db.getAllFriends(this.appState.userDocID, '');
 
-    this.requestedFriends$ = this.appState.reloadRequired$
-    .pipe(
-      filter(value=>value==null||value==ReloadStatus.FRIEND_REQUEST),
-      switchMap(value=>{
-        return this.db.getAllFriendRequest(this.appState.userDocID,'');
-      })
-    );
+    this.db.getAllFriendRequest(this.appState.userDocID,'').subscribe((value)=>{
+      this.requestedFriendsSubject.next(value);
+    })
+      
 
   }
 
