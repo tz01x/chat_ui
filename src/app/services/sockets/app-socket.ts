@@ -1,5 +1,5 @@
 
-import { Socket } from 'ngx-socket-io';
+import { Socket,SocketIoConfig } from 'ngx-socket-io';
 import { tap } from 'rxjs';
 import { Notification } from 'src/app/interfaces';
 import { environment } from 'src/environments/environment';
@@ -15,9 +15,12 @@ export class AppSocket extends SocketService {
         this.socketStatus = true;
     } 
 
-    setActiveUser(uid:string){
-        this.socket.emit('setActiveUser',{uid});
-        this.uid = uid;
+    setActiveUser(uid:string|null,){
+        if(uid){
+
+            this.socket.emit('setActiveUser',{uid});
+            this.uid = uid;
+        }
     }
 
     notification(){
@@ -33,9 +36,12 @@ export class AppSocket extends SocketService {
         this.socket.connect();
     }
 
-    static appSocketFactory(autoConnect:boolean=true) {
+    static appSocketFactory(token='abcd',autoConnect:boolean=true) {
         return new AppSocket(new Socket({ url: environment.chatSocketUrl, options: {
-            autoConnect:autoConnect
+            autoConnect:autoConnect,
+            extraHeaders:{
+                'token':token
+            }
         } }))
     }
 

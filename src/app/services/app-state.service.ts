@@ -4,6 +4,7 @@ import { Notification, NotificationType, ReloadStatus, User } from '../interface
 import { IndicatorService } from './indicator.service';
 import { NotificationService } from './notification.service';
 import { AppSocket } from './sockets/app-socket';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,19 +20,21 @@ export class AppStateService {
   expiration: Date | null = null;
   appDrawer = false;
   reloadRequired$ = new BehaviorSubject<number | null>(null);
-  socketConn = AppSocket.appSocketFactory(false);
+  socketConn!:AppSocket;
 
-  constructor(private notificationService: NotificationService, private indicator: IndicatorService) {
+  constructor(private tokenService:TokenService, private notificationService: NotificationService, private indicator: IndicatorService) {
 
-    this.socketConn.notification()
-      .subscribe((data: Notification) => this.notificationHandler(data));
 
     this.isAuthUser.subscribe(val => {
       if (val == true && this.userDocID) {
+        this.socketConn = AppSocket.appSocketFactory(this.tokenService.token?.access_token||"",false);
         this.socketConn.connect();
         this.socketConn.setActiveUser(this.userDocID);
+        this.socketConn.notification()
+        .subscribe((data: Notification) => this.notificationHandler(data));
+  
       } else {
-        this.socketConn.close();
+        this.socketConn?.close();
       }
     })
   }

@@ -17,6 +17,7 @@ import { UserAvaterComponent } from '../components/user-avater/user-avatar.compo
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ChatRoomInfoComponent } from '../chat-room-info/chat-room-info.component';
 import { ChatRoomService } from '../services/chatroom.service';
+import { TokenService } from '../services/token.service';
 
 @Component({
   standalone: true,
@@ -67,7 +68,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     public _chatService: ChatService,
     public _appState: AppStateService,
     private _db: StoreService,
-    private _chatRoomService: ChatRoomService
+    private _chatRoomService: ChatRoomService,
+    private _tokenService: TokenService,
 
   ) {
 
@@ -149,9 +151,9 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   constructSocket() {
     if (this.chatSocket) {
       this.chatSocket.close();
-      return chatSocketFactory();
+      return chatSocketFactory(this._tokenService.token?.access_token);
     } else {
-      return chatSocketFactory();
+      return chatSocketFactory(this._tokenService.token?.access_token);
     }
   }
 

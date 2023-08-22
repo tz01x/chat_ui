@@ -3,6 +3,7 @@ import { BehaviorSubject, Subject, retry, tap } from 'rxjs';
 import { IToken } from '../interfaces';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { AppStateService } from './app-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import { environment } from 'src/environments/environment';
 export class TokenService {
 
   private http = inject(HttpClient);
+
   private _token = new BehaviorSubject<IToken | null>(null);
   private refresh_token_url = `${environment.api}/refresh-access-token`
 
@@ -30,7 +32,7 @@ export class TokenService {
   loadToken(){
     const data = localStorage.getItem('token-service');
     this.token = data?JSON.parse(data):null;
-    return this.token
+    return this.token;
   }
 
   clearToken(){

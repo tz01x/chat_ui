@@ -7,6 +7,7 @@ export class SocketService {
       this.checkStatus();
 
     }
+
   
     checkStatus() {
       this.socket.on("connect", () => {
