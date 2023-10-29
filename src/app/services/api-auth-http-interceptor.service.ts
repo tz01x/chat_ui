@@ -4,12 +4,14 @@ import { EMPTY, Observable, catchError, of, switchMap, tap, throwError } from 'r
 import { environment } from 'src/environments/environment';
 import { AppStateService } from './app-state.service';
 import { TokenService } from './token.service';
+import { Router } from '@angular/router';
 
 
 @Injectable()
 export class ApiAuthHttpInterceptorService implements HttpInterceptor {
   appStatus = inject(AppStateService);
   tokenService = inject(TokenService);
+  router = inject(Router);
 
   regx = new RegExp(environment.api);
   private isRefreshing = false;
@@ -50,10 +52,16 @@ export class ApiAuthHttpInterceptorService implements HttpInterceptor {
           const request = this.addTokenHeader(req, value.access_token);
           return next.handle(request);
       }),
-      catchError((error)=>{
+      catchError((error:HttpErrorResponse)=>{
         this.isRefreshing = false;
         this.tokenService.token = null;
-        return throwError(()=>error);
+        if(error.status==401){
+          this.router.navigate(['/login']);
+        }else{
+          return throwError(()=>error);
+        }
+
+        return EMPTY;
       })
       )
     }
