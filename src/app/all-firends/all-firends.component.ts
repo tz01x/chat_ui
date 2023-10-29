@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 import { debounceTime, of, switchMap, BehaviorSubject, filter } from 'rxjs';
 import { StoreService } from '../services/store.service';
-import { FriendsListItem, NotificationType, ReloadStatus, User, UserListItem } from '../interfaces';
+import { FriendsListItem, IAcceptedFriend, NotificationType, ReloadStatus, User, UserListItem } from '../interfaces';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
@@ -38,7 +38,7 @@ export class AllFirendsComponent implements OnInit {
 
   searchFormControl: FormControl;
 
-  private allFriendsSubject = new BehaviorSubject<FriendsListItem[]>([]);
+  private allFriendsSubject = new BehaviorSubject<IAcceptedFriend[]>([]);
   public allFriendsList$ = this.allFriendsSubject.asObservable();
 
   private requestedFriendsSubject = new BehaviorSubject<FriendsListItem[]>([]);
@@ -55,21 +55,13 @@ export class AllFirendsComponent implements OnInit {
 
   ngOnInit(): void {
     this.valueChangeHandler();
-    this.allFriendsList$ = this.appState.reloadRequired$
-    .pipe(
-      filter(value=>value==ReloadStatus.CHAT_LIST||value===null),
-      switchMap(value=>{
-        return this.db.getAllFriends(this.appState.userDocID, '');
-      })
-    ) ;
+    // TODO: need a auto refresh feature at particular action
+    this.allFriendsList$ =  this.db.getAllFriends(this.appState.userDocID, '');
 
-    this.requestedFriends$ = this.appState.reloadRequired$
-    .pipe(
-      filter(value=>value==null||value==ReloadStatus.FRIEND_REQUEST),
-      switchMap(value=>{
-        return this.db.getAllFriendRequest(this.appState.userDocID,'');
-      })
-    );
+    this.db.getAllFriendRequest(this.appState.userDocID,'').subscribe((value)=>{
+      this.requestedFriendsSubject.next(value);
+    })
+      
 
   }
 

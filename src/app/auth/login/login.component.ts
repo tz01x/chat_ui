@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { User } from 'src/app/interfaces';
 import { InteractiveLoading } from 'src/app/loading';
+import { TokenService } from 'src/app/services/token.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
     public appState: AppStateService,
     public auth: Auth,
     private router: Router,
-    private db: StoreService
+    private db: StoreService,
+    private tokenService: TokenService
   ) { 
     this.interactiveLoading = new InteractiveLoading();
   }
@@ -68,41 +70,32 @@ export class LoginComponent implements OnInit {
       refreshToken,
     } = userCredential.user;
 
-
-
-    from(userCredential.user.getIdToken())
-      .pipe(switchMap((accessToken) => {
-
-        return this.interactiveLoading.showLoaderUntilCompleted(
-          this.addUserToDB({
-            email,
-            displayName,
-            photoURL,
-            uid,
-            refreshToken,
-            'accessToken': accessToken,
-            other: JSON.stringify(userCredential.user.toJSON())
-          })
-        );
-         
-      })).subscribe({
-        next: (res) => {
-          const userRes = res as User;
-          this.appState.setUser(userRes);
-          this.appState.setUserDocID(userRes.uid);
-        },
-        error:(err)=>{
-          const {status} = err;
-          if(status != undefined  && status==0){
-            this.appState.showError('Connection Error');
-          }else{
-            this.appState.showError('Error Occurs');
-          }
-        },
-        complete:()=>{
-          this.router.navigate(['home']);
-        }
-      });
+    const obj = userCredential.user.toJSON() as any;
+    const accessToken = obj?.stsTokenManager?.accessToken;
+    this.interactiveLoading.showLoaderUntilCompleted(
+      this.addUserToDB({
+        email,
+        displayName,
+        photoURL,
+        uid,
+        refreshToken,
+        accessToken,
+        other: JSON.stringify(obj)
+      })
+    ).subscribe({
+      next: (res) => {
+        this.tokenService.token = {access_token: res.access_token, refresh_token: res.refresh_token};
+        console.log(this.tokenService.token);
+        this.appState.setUser(res.user);
+        this.appState.setUserDocID(res.user.uid);
+      },
+      error:(err)=>{
+        this.appState.networkErrorHandler(err);
+      },
+      complete:()=>{
+        this.router.navigate(['home']);
+      }
+    });
 
 
   }

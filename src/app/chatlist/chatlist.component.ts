@@ -1,67 +1,101 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
-import { filter, from, map, Observable, of, switchMap, tap } from 'rxjs';
-import { AddedFriends, AddUser, ReloadStatus } from '../interfaces';
+import { BehaviorSubject, catchError, combineLatest, concat, debounceTime, delay, distinctUntilChanged, filter, from, map, Observable, of, retry, startWith, Subject, switchMap, tap } from 'rxjs';
+import { AddedFriends, AddUser, IChatRoom, ReloadStatus } from '../interfaces';
 import { InteractiveLoading } from '../loading';
 import { LoadingSpinerComponent } from '../loading-spiner/loading-spiner.component';
 import { AppStateService } from '../services/app-state.service';
 import { StoreService } from '../services/store.service';
+import { ChatRoomSearchBarComponent } from '../components/chat-room-search-bar/chat-room-search-bar.component';
+import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-  standalone:true,
-  imports:[
+  standalone: true,
+  imports: [
+    ChatRoomSearchBarComponent,
     CommonModule,
     RouterModule,
     MatIconModule,
     MatButtonModule,
-    LoadingSpinerComponent
+    LoadingSpinerComponent,
+    UserAvaterComponent,
+    MatTooltipModule,
   ],
+
   selector: 'app-chatlist',
   templateUrl: './chatlist.component.html',
-  styleUrls: ['./chatlist.component.scss']
+  styleUrls: ['./chatlist.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatlistComponent implements OnInit {
+export class ChatlistComponent implements OnInit, OnDestroy {
   @Input() renderInAside = false;
 
-  peoples$:Observable<AddedFriends[]>=of([]);
+  chatRooms$!: Observable<IChatRoom[]>
   loader = new InteractiveLoading();
+  searchTermChangeSubject = new Subject<string>();
+  searchTerm$ = this.searchTermChangeSubject.asObservable();
+  refresh$ = new BehaviorSubject<boolean>(true);
 
-  constructor(private _route:Router,
-    public appState:AppStateService,
-    private db:StoreService
-  ) { 
+  constructor(
+    private _route: Router,
+    public appState: AppStateService,
+    private db: StoreService,
+  ) {
+
 
   }
 
   ngOnInit(): void {
 
-    if(!this.renderInAside && this.appState.isViewPortLarge){
+
+    if (!this.renderInAside && this.appState.isViewPortLarge) {
       return;
     }
-    if(this.appState.userDocID){
 
-      this.peoples$ = this.appState.reloadRequired$
-      .pipe(
-        filter(val=> val===null || val===ReloadStatus.CHAT_LIST),
-        switchMap((_)=>{
-          if(this.appState.userDocID)
-            return this.loader.showLoaderUntilCompleted(
-              this.db.getFriendsList(this.appState.userDocID)
-            );
-          return of([])
-        })
-      )
-       
 
-    }
+
+    // emit null fist then the search item value
+    const searchTerm$ = concat(
+      of(null),
+      this.searchTerm$.pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+      ));
+
+    // since search term observable wont complete immediately
+    // thats whey we wrap loader.showLoaderUntilComplete function with data retrieve function
+    this.chatRooms$ = combineLatest([this.refresh$.pipe(debounceTime(400)), searchTerm$]).pipe(
+      switchMap(([_, value]) => {
+        return this.loader.showLoaderUntilCompleted(
+          this.db.getChatRoomList(this.appState.userDocID || '', value)
+            .pipe(
+              retry(3),
+              catchError((err) => {
+              this.appState.networkErrorHandler(err);
+              return of([]);
+            })
+            ));
+      }));
+
+
   }
 
-  message(uid:string){
-    this._route.navigate(['message',uid]);
+
+  searchingForChatRoom(display_name: string) {
+    console.log('searching for chat room', display_name);
+    this.searchTermChangeSubject.next(display_name);
+  }
+
+  refreshChatRoomList() {
+    this.refresh$.next(true);
+  }
+
+  ngOnDestroy(): void {
   }
 
 

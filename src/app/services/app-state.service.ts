@@ -1,10 +1,10 @@
-import { ThisReceiver } from '@angular/compiler';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of, Subject, switchMap, timer } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Notification, NotificationType, ReloadStatus, User } from '../interfaces';
 import { IndicatorService } from './indicator.service';
 import { NotificationService } from './notification.service';
 import { AppSocket } from './sockets/app-socket';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,28 +20,30 @@ export class AppStateService {
   expiration: Date | null = null;
   appDrawer = false;
   reloadRequired$ = new BehaviorSubject<number | null>(null);
-  socketConn = AppSocket.appSocketFactory();
+  socketConn!:AppSocket;
 
-  constructor(private notificationService: NotificationService,private indicator:IndicatorService) {
+  constructor(private tokenService:TokenService, private notificationService: NotificationService, private indicator: IndicatorService) {
 
-    this.socketConn.notification()
-    .subscribe((data: Notification) => this.notificationHandler(data));
 
-    this.isAuthUser.subscribe(val=>{
-      if(val==true && this.userDocID){
+    this.isAuthUser.subscribe(val => {
+      if (val == true && this.userDocID) {
+        this.socketConn = AppSocket.appSocketFactory(this.tokenService.token?.access_token||"",false);
         this.socketConn.connect();
         this.socketConn.setActiveUser(this.userDocID);
-      }else{
-        this.socketConn.close();
+        this.socketConn.notification()
+        .subscribe((data: Notification) => this.notificationHandler(data));
+  
+      } else {
+        this.socketConn?.close();
       }
     })
   }
 
-  notificationHandler(data:Notification){
+  notificationHandler(data: Notification) {
     const { content, reloadRequired, reloadStatus, type } = data;
 
     if (type === NotificationType.ERROR) {
-      this.showError(content); 
+      this.showErrorNotification(content);
       return;
     }
 
@@ -49,18 +51,18 @@ export class AppStateService {
       this.reloadRequired$.next(reloadStatus);
     }
 
-    
-    if(reloadStatus===ReloadStatus.FRIEND_REQUEST){
+
+    if (reloadStatus === ReloadStatus.FRIEND_REQUEST) {
       this.indicator.incrementRequestIndicator()
     }
-    
+
     this.showNonfiction(content);
   }
 
   setUserDocID(id: string) {
     this.userDocID = id;
     localStorage.setItem('docID', id);
-    
+
   }
 
   setUser(user: User) {
@@ -117,18 +119,17 @@ export class AppStateService {
     this.appDrawer = false;
   }
 
-  showError(errorText: any) {
+  showErrorNotification(errorText: any) {
     this.notificationService.openSnackBar(errorText, 'error')
   }
-  
-  networkErrorHandler(error:any){
-    const {detail,status} = error?.error;
-    if(status==0){
-      this.showError('NetworkError: Can not connect to server');
-    }else{
-      this.showError(detail);
+
+  networkErrorHandler(error: any) {
+    if (error.status == 0) {
+      this.showErrorNotification('Failed to connect');
+    } else {
+      this.showErrorNotification(error?.error?.detail || "Server error");
     }
-  } 
+  }
 
   showNonfiction(text: any) {
     this.notificationService.openSnackBar(text, 'success')

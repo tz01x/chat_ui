@@ -55,7 +55,7 @@ $dark-theme: mat.define-dark-theme((
 @import url('https://fonts.googleapis.com/css2?family=Faster+One&family=Turret+Road&display=swap');
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;  box-sizing: border-box; }
+body { margin: 0; font-family: Roboto, sans-serif;  box-sizing: border-box; }
 
 .mat-snack-bar-container{
   // background-color: rgb(234,247,238); //rgb(58, 182, 93)

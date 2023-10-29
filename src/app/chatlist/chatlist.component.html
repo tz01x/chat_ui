@@ -1,24 +1,35 @@
-
 <div *ngIf="!renderInAside && appState.isViewPortLarge else elseBlock">
    <div class="image-container">
       <img src="/assets/undraw_quick_chat_re_bit5.svg" alt="" srcset="">
    </div>
 </div>
 <ng-template #elseBlock>
-   <app-loading-spiner [isLoading]="loader.loading$" diameter="50"></app-loading-spiner>
-   <ul class="list-items">
-      <li
-      class="list-item"
-      *ngFor="let folder of peoples$ | async; last as last">
-      <div  [routerLink]="['/home/message',folder.uid,folder.roomId]"  class="list-item-link" [routerLinkActive]="'list-item-active'">   
-         <button mat-button class="list-item-box">
-            <mat-icon mat-list-icon>account_circle</mat-icon>
-            {{folder.displayName}}
+   <div class="additonal-items">
+
+      <button  mat-icon-button (click)="refreshChatRoomList()" matTooltip="Refresh list" matTooltipPosition="above">
+         <mat-icon>refresh</mat-icon>
+      </button>
+      
+         <button [routerLink]="['/home/message/create-group']"  mat-icon-button matTooltip="Create Group" matTooltipPosition="above">
+            <mat-icon>add_circle_outline</mat-icon>
          </button>
-      </div>
+      
+   </div>
+   <div class="search-bar">
+      <app-chat-room-search-bar (onSummit)="searchingForChatRoom($event)"></app-chat-room-search-bar>
+   </div>
+   <app-loading-spiner [isLoading]="loader.loading$" diameter="50"></app-loading-spiner>
+   <ul class="list-items" *ngIf="chatRooms$ | async as chatroom">
+      <li class="list-item" *ngFor="let room of chatroom; last as last">
+         <div [routerLink]="['/home/message',room.id,room.room_id]" class="list-item-link"
+            [routerLinkActive]="'list-item-active'">
+            <button mat-button class="list-item-box">
+               <app-user-avatar 
+               [displayName]="room.display_property.displayName" 
+               [photoURL]="room.display_property.photoURL">
+            </app-user-avatar>
+            </button>
+         </div>
       </li>
-  </ul>
+   </ul>
 </ng-template>
-
-
- 

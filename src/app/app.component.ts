@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
 import { AppStateService } from './services/app-state.service';
-import { Router } from '@angular/router';
+import { ChildrenOutletContexts, Router } from '@angular/router';
+import { slideInAnimation } from './animation';
+import { TokenService } from './services/token.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'chat_ui';
@@ -24,7 +26,9 @@ export class AppComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     public appState:AppStateService,
-    private router:Router){
+    private router:Router,
+    private tokenService:TokenService
+    ){
     
     breakpointObserver
       .observe([
@@ -39,12 +43,13 @@ export class AppComponent {
             }else{
               this.appState.isViewPortLarge = true;
             }
+            this.appState.reloadRequired$.next(null);
           }
         }
       });
 
-    if(appState.loadUserInfo()){
-      // this.router.navigate(['home']);
+    if(appState.loadUserInfo() && tokenService.loadToken()){
+      this.router.navigate(['home']);
     }else{
       if(!window.location.pathname.match('login')){
         this.router.navigate(['login']);

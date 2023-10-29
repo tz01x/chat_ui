@@ -8,12 +8,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
-import { ContentRefDirective } from './content-ref.directive';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { ApiAuthHttpInterceptorService } from './services/api-auth-http-interceptor.service';
+
 @NgModule({
   declarations: [
     AppComponent,
-    ContentRefDirective,
   ],
   imports: [
     BrowserModule,
@@ -26,7 +26,13 @@ import { HttpClientModule } from '@angular/common/http';
     HttpClientModule,
 
   ],
-  providers: [],
+  providers: [
+  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: ApiAuthHttpInterceptorService,
+    multi: true
+  }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

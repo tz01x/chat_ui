@@ -1,0 +1,48 @@
+<div class="create-grp-section">
+
+    <h2>Create Group</h2>
+
+    <form (submit)="create()" class="create-grp-form">
+        <div class="meta-data-input">
+
+            <div class="gen-photo">
+                <img [src]="photoUrl$ | async" alt="">
+            </div>
+            <mat-form-field class="grp-name-inp-field">
+                <mat-label>Group Name</mat-label>
+                <input matInput [formControl]="groupNameCtrl" type="text" placeholder="Enter Group Name ..">
+                <mat-error *ngIf="!groupNameCtrl.hasError('required')">
+                    Group name is required
+                </mat-error>
+                <mat-error *ngIf="!groupNameCtrl.hasError('minLength')">
+                    minimum group name length 3
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <mat-form-field class="example-chip-list">
+            <mat-label>Add People</mat-label>
+            <mat-chip-list #chipGrid aria-label="Friends selection">
+                <mat-chip *ngFor="let item of items; let i = index" (removed)="remove(i)" style="padding-left: 0;">
+                    <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
+                    <button matChipRemove [attr.aria-label]="'remove ' + item.displayName">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip>
+            </mat-chip-list>
+            <input placeholder="Enter Name ..." #friendsInput [formControl]="inputCtrl" [matChipInputFor]="chipGrid"
+                [matAutocomplete]="auto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let item of filteredItems | async" [value]="item">
+                    <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
+                </mat-option> 
+            </mat-autocomplete>
+        </mat-form-field>
+        <div style="display: flex; flex-direction: row; justify-content: end; width: 100%; gap: 10px;">
+
+            <button type="submit" mat-raised-button color="primary">Create</button>
+            <button mat-raised-button (click)="cancel_and_close($event)">cancel</button>
+        </div>
+    </form>
+
+</div>
