@@ -84,17 +84,13 @@ export class LoginComponent implements OnInit {
       })
     ).subscribe({
       next: (res) => {
-        this.tokenService.token = {access_token: res.access_token, refresh_token: res.refresh_token};
-        console.log(this.tokenService.token);
+        this.tokenService.setToken({access_token: res.access_token, refresh_token: res.refresh_token});
         this.appState.setUser(res.user);
-        this.appState.setUserDocID(res.user.uid);
+        this.appState.isAuthUser.next(true);
       },
       error:(err)=>{
         this.appState.networkErrorHandler(err);
       },
-      complete:()=>{
-        this.router.navigate(['home']);
-      }
     });
 
 

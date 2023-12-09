@@ -69,8 +69,12 @@ export class ChatlistComponent implements OnInit, OnDestroy {
 
     // since search term observable wont complete immediately
     // thats whey we wrap loader.showLoaderUntilComplete function with data retrieve function
-    this.chatRooms$ = combineLatest([this.refresh$.pipe(debounceTime(400)), searchTerm$]).pipe(
-      switchMap(([_, value]) => {
+    this.chatRooms$ = combineLatest([
+      concat(of(true), this.refresh$.pipe(debounceTime(400))),
+      this.appState.reloadRequired$.pipe(filter(v=>v==null||v===ReloadStatus.CHAT_LIST)),
+      searchTerm$,
+    ]).pipe(
+      switchMap(([_,__,value]) => {
         return this.loader.showLoaderUntilCompleted(
           this.db.getChatRoomList(this.appState.userDocID || '', value)
             .pipe(
@@ -80,7 +84,16 @@ export class ChatlistComponent implements OnInit, OnDestroy {
               return of([]);
             })
             ));
-      }));
+      }),
+      tap(items=>{
+        
+        const chatRoomIdAndDisplayName:any={}
+        items.forEach((v:IChatRoom)=>{
+          return chatRoomIdAndDisplayName[v.room_id]=v.display_property.displayName
+        });
+        this.appState.chatRoomNames.next(chatRoomIdAndDisplayName)
+      })
+    );
 
 
   }
@@ -93,6 +106,10 @@ export class ChatlistComponent implements OnInit, OnDestroy {
 
   refreshChatRoomList() {
     this.refresh$.next(true);
+  }
+
+  listTrackBy(idx:any,item:IChatRoom){
+    return item.room_id;
   }
 
   ngOnDestroy(): void {

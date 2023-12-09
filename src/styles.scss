@@ -52,8 +52,8 @@ $dark-theme: mat.define-dark-theme((
 }
 
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Faster+One&family=Turret+Road&display=swap');
-
+// @import url('https://fonts.googleapis.com/css2?family=Faster+One&family=Turret+Road&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&display=swap');
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, sans-serif;  box-sizing: border-box; }
 
@@ -69,4 +69,22 @@ body { margin: 0; font-family: Roboto, sans-serif;  box-sizing: border-box; }
 .btn-icon-wrapper{
   display: flex;
   align-items: center;
+}
+
+
+.no-records{
+  font: 400 14px / 20px Roboto, "Helvetica Neue", sans-serif;
+  letter-spacing: normal;
+  color: white;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  padding: 2em;
+  display: grid;
+  place-items: center;
+  font-size: 3em;
+  font-weight: 500;
+  opacity: 0.4;
+}
+
+.appName{
+  font-family: 'Inconsolata', monospace !important;
 }

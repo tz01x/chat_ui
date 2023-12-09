@@ -50,6 +50,7 @@ export class HomeComponent implements OnInit {
       return EMPTY;
     })).subscribe(() => {
       this.appState.isAuthUser.next(false);
+      this.appState.closeSocketConnection();
     });
   }
 

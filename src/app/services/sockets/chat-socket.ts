@@ -56,9 +56,10 @@ export class ChatSocket extends SocketService{
 }
 
 
-export const chatSocketFactory= (token='chat-room-token')=>{
+export const chatSocketFactory= (uid:string ,token='chat-room-token')=>{
   return new ChatSocket(new Socket({ url: environment.chatSocketUrl, options: {
     extraHeaders:{
+      'uid':uid,
       'token':token
     }
   } }))

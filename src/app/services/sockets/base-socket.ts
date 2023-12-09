@@ -5,7 +5,6 @@ export class SocketService {
   
     constructor(protected socket: Socket) { 
       this.checkStatus();
-
     }
 
   

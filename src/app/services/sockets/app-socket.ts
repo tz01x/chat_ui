@@ -36,11 +36,12 @@ export class AppSocket extends SocketService {
         this.socket.connect();
     }
 
-    static appSocketFactory(token='abcd',autoConnect:boolean=true) {
+    static appSocketFactory(token='abcd',uid:string, autoConnect:boolean=true) {
         return new AppSocket(new Socket({ url: environment.chatSocketUrl, options: {
             autoConnect:autoConnect,
             extraHeaders:{
-                'token':token
+                'token':token,
+                'uid':uid,
             }
         } }))
     }

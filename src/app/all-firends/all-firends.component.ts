@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
-import { debounceTime, of, switchMap, BehaviorSubject, filter } from 'rxjs';
+import { debounceTime,concat, of, switchMap, BehaviorSubject, filter, combineLatest, map, startWith, from, mergeMap, tap } from 'rxjs';
 import { StoreService } from '../services/store.service';
 import { FriendsListItem, IAcceptedFriend, NotificationType, ReloadStatus, User, UserListItem } from '../interfaces';
 import { CommonModule } from '@angular/common';
@@ -36,13 +36,24 @@ import { IndicatorService } from '../services/indicator.service';
 })
 export class AllFirendsComponent implements OnInit {
 
-  searchFormControl: FormControl;
+  searchFormControl = new FormControl<string>('');
+  // private allFriendsSubject = new BehaviorSubject<IAcceptedFriend[]>([]);
+ 
 
-  private allFriendsSubject = new BehaviorSubject<IAcceptedFriend[]>([]);
-  public allFriendsList$ = this.allFriendsSubject.asObservable();
-
-  private requestedFriendsSubject = new BehaviorSubject<FriendsListItem[]>([]);
-  public requestedFriends$ = this.requestedFriendsSubject.asObservable();
+  
+  public requestedFriends$= combineLatest([
+    this.appState.reloadRequired$.pipe(filter(v => v === null || v === ReloadStatus.FRIEND_REQUEST)),
+    this.db.getAllFriendRequest(this.appState.userDocID, '')
+  ]).pipe(
+    map(([_, res]) => res),
+  );
+  public allFriendsList$ = combineLatest([
+    this.appState.reloadRequired$.pipe(filter(v => v === null || v === ReloadStatus.All_FRIENDS_LIST)),
+    concat(of(''), this.searchFormControl.valueChanges.pipe(debounceTime(200))),
+  ]).pipe(
+    switchMap(([_, q]) => {
+      return this.db.getAllFriends(this.appState.userDocID, q ?? '', 100, 0);
+    }));;
 
   constructor(
     public appState: AppStateService,
@@ -50,33 +61,21 @@ export class AllFirendsComponent implements OnInit {
     private db: StoreService,
     public indicator:IndicatorService
   ) {
-    this.searchFormControl = new FormControl('');
-  }
-
-  ngOnInit(): void {
-    this.valueChangeHandler();
-    // TODO: need a auto refresh feature at particular action
-    this.allFriendsList$ =  this.db.getAllFriends(this.appState.userDocID, '');
-
-    this.db.getAllFriendRequest(this.appState.userDocID,'').subscribe((value)=>{
-      this.requestedFriendsSubject.next(value);
-    })
-      
+       
+    this.initateDataSource();
 
   }
 
-  valueChangeHandler() {
-    this.allFriendsList$ = this.searchFormControl.valueChanges
-      .pipe(
-        debounceTime(500),
-        switchMap((value: string) => {
-         return this.db.getAllFriends(this.appState.userDocID, value);
-          
-        })
-      )
+  private initateDataSource() {
+    // const formChange = ;
 
+    // this.allFriendsList$ = 
 
+    // this.requestedFriends$ = 
   }
+
+  ngOnInit(): void {}
+
 
   goBack() {
     this.router.navigate(['/home'])
@@ -92,6 +91,7 @@ export class AllFirendsComponent implements OnInit {
   onComplectAction(user: FriendsListItem) {
     this.appState.showNonfiction(user.displayName+' was remove from you friends list');
     this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
+    this.appState.reloadRequired$.next(ReloadStatus.All_FRIENDS_LIST);
   }
 
   onErrorAction(user: FriendsListItem, error: any) {
@@ -111,6 +111,7 @@ export class AllFirendsComponent implements OnInit {
   onNextAcceptAction(user: FriendsListItem, value: any) {
     this.appState.showNonfiction('Request Accepted');
     this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
+    this.appState.reloadRequired$.next(ReloadStatus.All_FRIENDS_LIST);
     this.appState.socketConn.sendNotification({
       to:user.uid,
       from:this.appState?.userDocID,
