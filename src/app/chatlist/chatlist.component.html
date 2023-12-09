@@ -20,7 +20,7 @@
    </div>
    <app-loading-spiner [isLoading]="loader.loading$" diameter="50"></app-loading-spiner>
    <ul class="list-items" *ngIf="chatRooms$ | async as chatroom">
-      <li class="list-item" *ngFor="let room of chatroom; last as last">
+      <li class="list-item" *ngFor="let room of chatroom; trackBy listTrackBy">
          <div [routerLink]="['/home/message',room.id,room.room_id]" class="list-item-link"
             [routerLinkActive]="'list-item-active'">
             <button mat-button class="list-item-box">

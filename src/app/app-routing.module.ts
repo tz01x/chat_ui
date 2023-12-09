@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router'; // CLI imports router 
 import { AuthGuard } from './guards/auth.guard';
+import { AppStateService } from './services/app-state.service';
 
 
 const standAloneRoute: Routes = [
@@ -26,6 +27,8 @@ const standAloneRoute: Routes = [
 @NgModule({
     imports: [RouterModule.forRoot(standAloneRoute,{preloadingStrategy: PreloadAllModules})],
     exports: [RouterModule],
-    providers: []
+    providers: [
+        AppStateService
+    ]
 })
 export class AppRoutingModule { }

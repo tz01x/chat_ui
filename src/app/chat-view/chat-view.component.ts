@@ -1,7 +1,7 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription } from 'rxjs';
-import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, User } from '../interfaces';
+import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, IToken, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
 import { ChatSocket, chatSocketFactory } from '../services/sockets/chat-socket';
@@ -46,7 +46,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   // messageList$ = this.messageListSubject$.asObservable();
   restDistancePointer: any
   otherPerson: User | null = null;
-  chatSocket: ChatSocket | undefined;
+  chatSocket!: ChatSocket;
   apiLimit = 50;
   apiOffset = 0;
   isNextPageAvailable = true;
@@ -56,7 +56,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   drawer = false;
 
 
-  @ViewChild('scroll', { static: true }) scroll: any;
+  @ViewChild(InfiniteScrollDirective, {read:ElementRef }) scroll!: ElementRef;
 
   currentChatRoom$ = this._chatRoomService.getChatRoom();
 
@@ -65,8 +65,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   constructor(
     private _Activatedroute: ActivatedRoute,
     private _router: Router,
-    public _chatService: ChatService,
-    public _appState: AppStateService,
+    public chatService: ChatService,
+    public appState: AppStateService,
     private _db: StoreService,
     private _chatRoomService: ChatRoomService,
     private _tokenService: TokenService,
@@ -85,17 +85,21 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     // );
 
     this.subscriptions.push(
-      combineLatest([this._Activatedroute.paramMap])
-        .subscribe(([params]) => {
-          this.onRouteChange(params);
+      combineLatest([this._Activatedroute.paramMap,this._tokenService.token])
+
+        .subscribe(([params,tkn]) => {
+          this.onRouteChange(params,tkn);
         }));
   }
 
   ngOnInit(): void {
-    this.scrollToBottom();
   }
 
-  private onRouteChange(params: ParamMap) {
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }  
+
+  private onRouteChange(params: ParamMap, token:IToken|null) {
 
     // console.log(chatRoom, params);
     // if (!chatRoom) return;
@@ -104,17 +108,17 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     // this.displayName = chatRoom?.display_property.displayName || '';
 
 
-    if (!this.roomId || !this.chatRoomId || !this._appState.userDocID) {
+    if (!this.roomId || !this.chatRoomId || !this.appState.userDocID ||!token) {
       return
     }
 
-    this._db.getChatRoom(this._appState.userDocID, this.roomId)
+    this._db.getChatRoom(this.appState.userDocID, this.roomId)
       .pipe(
         takeUntil(this.destroy$),
         tap((room) => {
           if (!room.found) {
             this._router.navigate(['/home']);
-            this._appState.showNonfiction('Does not exist');
+            this.appState.showNonfiction('Does not exist');
           }
 
         }),
@@ -134,26 +138,23 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     this.messageListSubject$.next([]);
     this.loadAllMessages();
 
-    this.chatSocket = this.constructSocket();
-    this.chatSocket.setRoom(this._appState.userDocID, this.roomId, this.chatRoomId);
+    this.chatSocket = this.constructSocket(this.appState.userDocID,token);
+    this.chatSocket.setRoom(this.appState.userDocID, this.roomId, this.chatRoomId);
     this.chatSocket.getUserStatus(this.chatRoomId);
     this.activeUserStatus$ = this.chatSocket.receiveUserState();
 
     this.loadMessageFromObservable(this.chatSocket.getMessages());
     this.loadMessageFromObservable(this.chatSocket.getLastSentMessage());
 
-
-
-
   }
 
 
-  constructSocket() {
+  constructSocket(uid:string, token:IToken) {
     if (this.chatSocket) {
       this.chatSocket.close();
-      return chatSocketFactory(this._tokenService.token?.access_token);
+      return chatSocketFactory(uid, token.access_token);
     } else {
-      return chatSocketFactory(this._tokenService.token?.access_token);
+      return chatSocketFactory(uid, token.access_token);
     }
   }
 
@@ -170,7 +171,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 
   sendMessage(event: any) {
     const { code, keyCode, type } = event;
-    if (!this.roomId || !this.chatRoomId || !this._appState.userDocID)
+    if (!this.roomId || !this.chatRoomId || !this.appState.userDocID)
       return;
 
     if ((code == 'Enter' || type == 'click') && this.textMessage) {
@@ -179,7 +180,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
         value: this.textMessage,
         msg_type: 'TEXT',
         chat_room_id: this.chatRoomId,
-        user_uid: this._appState.userDocID,
+        user_uid: this.appState.userDocID,
       })
       this.textMessage = '';
     }
@@ -197,7 +198,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     this._db.getMessages(this.roomId, this.apiLimit, this.apiOffset)
       .pipe(
         catchError(error => {
-          this._appState.networkErrorHandler(error);
+          this.appState.networkErrorHandler(error);
           this._router.navigate(['/home/message']);
           return EMPTY;
         }),
@@ -244,6 +245,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   }
 
 
-
+  msgTrackBy(idx:any,item:iMessage){
+    return idx;
+  }
 
 }

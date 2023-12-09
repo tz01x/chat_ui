@@ -147,7 +147,7 @@ export interface IMembersSplitter{
 }
 
 export interface Notification {
-    content: string
+    content: any
     to: string
     from: string
     type: string | null
@@ -158,7 +158,8 @@ export interface Notification {
 export enum NotificationType {
     MESSAGE = 'message',
     NOTIFY = 'notify',
-    ERROR = 'error'
+    ERROR = 'error',
+    NEWMSG = 'new-message'
 }
 
 export interface IBaseResponse{

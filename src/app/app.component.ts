@@ -48,7 +48,8 @@ export class AppComponent {
         }
       });
 
-    if(appState.loadUserInfo() && tokenService.loadToken()){
+    if(appState.loadUserInfo() && this.tokenService.loadToken()){
+      appState.isAuthUser.next(true);
       this.router.navigate(['home']);
     }else{
       if(!window.location.pathname.match('login')){
@@ -57,9 +58,16 @@ export class AppComponent {
     }
 
     this.appState.isAuthUser.subscribe(isAuth=>{
+      // debugger;
       if(!isAuth){
         this.appState.clearUserInfo();
         this.router.navigate(['login']);
+        this.appState.closeSocketConnection();
+        this.appState.clearUserInfo();
+        this.appState.drawerClose();
+      }else{
+        // user auth
+        this.router.navigate(['home']);
       }
     })
   }

@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { Notification, NotificationType, ReloadStatus, User } from '../interfaces';
+import { BehaviorSubject, Subject, combineLatest,takeUntil } from 'rxjs';
+import { IChatRoom, Notification, NotificationType, ReloadStatus, User } from '../interfaces';
 import { IndicatorService } from './indicator.service';
 import { NotificationService } from './notification.service';
 import { AppSocket } from './sockets/app-socket';
 import { TokenService } from './token.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AppStateService {
   private darkModeSubject = new BehaviorSubject<boolean>(true);
   darkMode$ = this.darkModeSubject.asObservable();
@@ -20,32 +18,60 @@ export class AppStateService {
   expiration: Date | null = null;
   appDrawer = false;
   reloadRequired$ = new BehaviorSubject<number | null>(null);
+  chatRoomNames = new BehaviorSubject<any>({})
   socketConn!:AppSocket;
-
+  destroy = new Subject<boolean>();
   constructor(private tokenService:TokenService, private notificationService: NotificationService, private indicator: IndicatorService) {
 
+    // combineLatest([this.isAuthUser,this.tokenService.token])
+    // .pipe(takeUntil(this.destroy))
+    // .subscribe(([val,tkn]) => {
+    //   console.log(val,tkn);
+    //   if (val == true && this.userDocID && tkn) {
+       
+    //   } else {
+    //     this.socketConn?.close();
+    //   }
+    // });
+  }
 
-    this.isAuthUser.subscribe(val => {
-      if (val == true && this.userDocID) {
-        this.socketConn = AppSocket.appSocketFactory(this.tokenService.token?.access_token||"",false);
-        this.socketConn.connect();
-        this.socketConn.setActiveUser(this.userDocID);
-        this.socketConn.notification()
-        .subscribe((data: Notification) => this.notificationHandler(data));
-  
-      } else {
-        this.socketConn?.close();
-      }
-    })
+  createAppSocketConnection(){
+    const token  = this.tokenService.getTokenValue();
+    if(token && this.userDocID){
+
+      this.socketConn = AppSocket.appSocketFactory(token?.access_token,this.userDocID??'',false);
+      this.socketConn.connect();
+      this.socketConn.setActiveUser(this.userDocID);
+      this.socketConn.notification()
+      .subscribe((data: Notification) => this.notificationHandler(data));
+    }else{
+      console.log('application socket connection could not be set')
+    }
+
+  }
+
+  closeSocketConnection(){
+    console.log('closing .. app socket ')
+    this.socketConn?.close();
   }
 
   notificationHandler(data: Notification) {
     const { content, reloadRequired, reloadStatus, type } = data;
 
+    if(type==NotificationType.NEWMSG){
+      const cRoomAndDisplayName:any = this.chatRoomNames.getValue();
+      if(cRoomAndDisplayName[content['roomId']]){
+        this.showNonfiction(`New Message From ${cRoomAndDisplayName[content['roomId']]}`);
+      }
+      
+      return;
+    }
+
     if (type === NotificationType.ERROR) {
       this.showErrorNotification(content);
       return;
     }
+
 
     if (reloadRequired) {
       this.reloadRequired$.next(reloadStatus);
@@ -67,9 +93,11 @@ export class AppStateService {
 
   setUser(user: User) {
     this.user = user;
+    this.setUserDocID(user.uid);
     this.expiration = this.addDays(new Date(), 5);
-    this.isAuthUser.next(true);
-    this.storeUserInfo();
+    this.createAppSocketConnection();
+    localStorage.setItem('userinfo', JSON.stringify(user));
+    localStorage.setItem('expiration', JSON.stringify(this.expiration?.toUTCString()));
   }
 
   addDays(date: Date, days: number) {
@@ -77,18 +105,11 @@ export class AppStateService {
     return date;
   }
 
-  storeUserInfo() {
-    localStorage.setItem('userinfo', JSON.stringify(this.user));
-    localStorage.setItem('expiration', JSON.stringify(this.expiration?.toUTCString()));
-  }
-
-
   loadUserDocID() {
     this.userDocID = localStorage.getItem('docID');
   }
 
   loadUserInfo() {
-
     const userInfo = localStorage.getItem('userinfo');
     if (userInfo) {
       this.user = JSON.parse(userInfo);
@@ -108,6 +129,7 @@ export class AppStateService {
   }
 
   clearUserInfo() {
+    this.user = null;
     localStorage.clear();
   }
 

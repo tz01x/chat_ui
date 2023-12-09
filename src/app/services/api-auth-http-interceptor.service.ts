@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Inject, Injectable, inject } from '@angular/core';
-import { EMPTY, Observable, catchError, of, switchMap, tap, throwError } from 'rxjs';
+import { EMPTY, Observable, catchError, filter, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AppStateService } from './app-state.service';
 import { TokenService } from './token.service';
@@ -22,10 +22,11 @@ export class ApiAuthHttpInterceptorService implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
   
     if (this.regx.test(req.url)) {
-  
-      const request = this.addTokenHeader(req, this.tokenService.token?.access_token||null);
+      
+        const tkn = this.tokenService.getTokenValue()
+        const request = this.addTokenHeader(req, tkn?.access_token??null);
 
-      return next.handle(request)
+        return next.handle(request)
         .pipe(
           catchError(
             (error: HttpErrorResponse) => {
@@ -36,6 +37,8 @@ export class ApiAuthHttpInterceptorService implements HttpInterceptor {
             })
 
         );
+      
+      
 
     }
     return next.handle(req);
@@ -43,7 +46,6 @@ export class ApiAuthHttpInterceptorService implements HttpInterceptor {
   }
 
   handleUnauthorizeError(req: HttpRequest<any>, next: HttpHandler) {
-    debugger;
     if(!this.isRefreshing){
       this.isRefreshing = true;
       return this.tokenService.refreshToken().pipe(
@@ -54,14 +56,12 @@ export class ApiAuthHttpInterceptorService implements HttpInterceptor {
       }),
       catchError((error:HttpErrorResponse)=>{
         this.isRefreshing = false;
-        this.tokenService.token = null;
-        if(error.status==401){
-          this.router.navigate(['/login']);
-        }else{
-          return throwError(()=>error);
-        }
-
-        return EMPTY;
+        this.tokenService.setToken(null);
+        
+        this.router.navigate(['/login']);
+      
+        return throwError(()=>error);
+        
       })
       )
     }
@@ -69,11 +69,11 @@ export class ApiAuthHttpInterceptorService implements HttpInterceptor {
 
   }
 
-  private addTokenHeader(request: HttpRequest<any>, token: string|null) {
+  private addTokenHeader(request: HttpRequest<any>, accessToken: string|null) {
 
     return request.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${accessToken}`
       }
     });
   }

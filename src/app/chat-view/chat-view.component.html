@@ -1,5 +1,5 @@
 <section
-    [ngClass]="{'chat-view-section':true,darkMode:(_appState.darkMode$|async),isViewPortLarge:_appState.isViewPortLarge}"
+    [ngClass]="{'chat-view-section':true,darkMode:(appState.darkMode$|async),isViewPortLarge:appState.isViewPortLarge}"
     *ngIf="(currentChatRoom$|async) as currentChatRoom"
 >
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
@@ -18,7 +18,7 @@
 
                 <nav class="nav">
                     <div class="nav-part-1">
-                        <ng-container *ngIf="!_appState.isViewPortLarge">
+                        <ng-container *ngIf="!appState.isViewPortLarge">
                             <button mat-icon-button aria-label="go back button" (click)="goBack()">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
@@ -41,11 +41,12 @@
 
 
                 <main class="chat-view-body">
-                    <div class="message-list" appInfiniteScroll (scrollingUp)="onScrollUp()"
-                        [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200" #scroll>
-                        <app-chat-bubble #messages *ngFor="let msg of (messageListSubject$ | async); let last = last;"
-                            [owner]="msg.user?.uid == _appState.user?.uid" [timeStamp]="1221" [message]="msg"
-                            [isLast]="last" (lastComponentViewRender)="lastComponentViewRender()"></app-chat-bubble>
+                    <div class="message-list"  #scroll appInfiniteScroll (scrollingUp)="onScrollUp()"
+                        [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200">
+                        <app-chat-bubble #messages *ngFor="let msg of (messageListSubject$ | async); let last = last; trackBy msgTrackBy"
+                            [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg"
+                            [isLast]="last" (lastComponentViewRender)="lastComponentViewRender()">
+                        </app-chat-bubble>
 
                     </div>
                     <div class="input-section">
