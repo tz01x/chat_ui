@@ -1,6 +1,6 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
-import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription } from 'rxjs';
+import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription, map } from 'rxjs';
 import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, IToken, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
@@ -43,7 +43,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   textMessage: string | null = null;
   displayName: string | null = null;
   messageListSubject$ = new BehaviorSubject<iMessage[]>([]);
-  // messageList$ = this.messageListSubject$.asObservable();
+  messageList$ = this.messageListSubject$.asObservable();
   restDistancePointer: any
   otherPerson: User | null = null;
   chatSocket!: ChatSocket;
@@ -216,7 +216,19 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   loadMessageFromObservable(obs$: Observable<iMessage>) {
     obs$.pipe(takeUntil(this.destroy$)).subscribe((data) => {
       const messages = this.messageListSubject$.getValue();
-      this.messageListSubject$.next([...messages, data]);
+      let newData:any = [];
+      if(data.status=='error'){
+          newData = messages.map(v=>{
+            if(v.id == data.id){
+              return {...v,status:'error'}
+            }
+            return v
+          })
+        
+      }else{
+        newData = [...messages, data];
+      }
+      this.messageListSubject$.next(newData);
     })
   }
 
@@ -246,7 +258,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 
 
   msgTrackBy(idx:any,item:iMessage){
-    return idx;
+    return item.id;
   }
 
 }

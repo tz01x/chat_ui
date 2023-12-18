@@ -43,7 +43,7 @@
                 <main class="chat-view-body">
                     <div class="message-list"  #scroll appInfiniteScroll (scrollingUp)="onScrollUp()"
                         [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200">
-                        <app-chat-bubble #messages *ngFor="let msg of (messageListSubject$ | async); let last = last; trackBy msgTrackBy"
+                        <app-chat-bubble #messages *ngFor="let msg of (messageList$ | async); let last = last; trackBy msgTrackBy"
                             [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg"
                             [isLast]="last" (lastComponentViewRender)="lastComponentViewRender()">
                         </app-chat-bubble>

@@ -74,7 +74,7 @@ export class AddFriendsComponent implements OnInit {
   onComplectAction(user:UserListItem){
     this.appState.showNonfiction('Request send to '+user.displayName);
     this.appState.reloadRequired$.next(ReloadStatus.CHAT_LIST);
-    this.appState.socketConn.sendNotification({
+    this.appState.socketConn?.sendNotification({
       content:`'${this.appState.user?.displayName}' add you`,
       to:user.uid,
       from:this.appState.userDocID,

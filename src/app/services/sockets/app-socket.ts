@@ -28,7 +28,6 @@ export class AppSocket extends SocketService {
     }
 
     sendNotification(data:any){
-        console.log('sendNotification..')
         this.socket.emit('sendNotification',data)
     }
 

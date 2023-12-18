@@ -17,28 +17,32 @@
                 </div>
             </ng-template>
             <div class="searchResultes">
-                <ng-container *ngIf="requestedFriends$ |async as friendRequests">
-                    <ng-container *ngIf="friendRequests.length; else noRecordTemplate">
-                        <div *ngFor="let user of friendRequests">
-                        <app-add-friends-list-item 
-                        [user]="user"
-                        [buttonText]="'Accept'"
-                        [actionFunction]="acceptActionFunction"
-                        [onNextAction]="onNextAcceptAction"
-                        [onErrorAction]="onErrorAcceptAction"
-                        [btnClass]="'acceptBtn'"
-                        ></app-add-friends-list-item>
-                        <mat-divider></mat-divider>
-                    </div>
-                    </ng-container>
+                <ng-container *ngIf="requestedFriends$ |async as friendRequests; else noRecords ">
+                    <ng-container *ngIf="friendRequests.length; else noRecords">
 
+                        <div *ngFor="let user of friendRequests;">
+                            <app-add-friends-list-item 
+                            [user]="user"
+                            [buttonText]="'Accept'"
+                            [actionFunction]="acceptActionFunction"
+                            [onNextAction]="onNextAcceptAction"
+                            [onErrorAction]="onErrorAcceptAction"
+                            [btnClass]="'acceptBtn'"
+                            ></app-add-friends-list-item>
+                            <mat-divider></mat-divider>
+                        </div>
+                    </ng-container>
+                    
+                    
                 </ng-container>
-                <ng-template #noRecordTemplate>
+                <ng-template #noRecords>
+
                     <div class="no-records">
                         No Friend Request...
                     </div>
                 </ng-template>
-                
+               
+            
             </div>
         </mat-tab>
         

@@ -62,6 +62,7 @@ export interface iMessagePayload {
 }
 
 export interface iMessage {
+    id: number|string,
     value: string
     type: string
     createdAt: object | number | null
