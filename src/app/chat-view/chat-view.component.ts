@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
 import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription, map } from 'rxjs';
 import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, IToken, User } from '../interfaces';
@@ -11,7 +11,7 @@ import { ContentRefDirective } from '../content-ref.directive';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormControlDirective, FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { InfiniteScrollDirective } from '../infinite-scroll.directive';
 import { UserAvaterComponent } from '../components/user-avater/user-avatar.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -27,6 +27,7 @@ import { TokenService } from '../services/token.service';
     MatIconModule,
     MatButtonModule,
     FormsModule,
+    ReactiveFormsModule,
     InfiniteScrollDirective,
     UserAvaterComponent,
     RouterModule,
@@ -54,9 +55,13 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   subscriptions: Subscription[] = [];
   drawer = false;
+  
+  reactiveTextMessageFromControl = new FormControl();
 
+  streamedValue$!:Observable<iMessage[]>
 
-  @ViewChild(InfiniteScrollDirective, {read:ElementRef }) scroll!: ElementRef;
+  @ViewChild(InfiniteScrollDirective, {read:ElementRef }) scroll!: ElementRef<HTMLDivElement>;
+  @ViewChildren('messages') messages!: QueryList<any>;
 
   currentChatRoom$ = this._chatRoomService.getChatRoom();
 
@@ -90,13 +95,40 @@ export class ChatViewComponent implements OnInit, OnDestroy {
         .subscribe(([params,tkn]) => {
           this.onRouteChange(params,tkn);
         }));
+
+
+        this.reactiveTextMessageFromControl.valueChanges.pipe(
+          takeUntil(this.destroy$),
+          map((val)=>{
+
+            const newVal:iMessage = {
+              createdAt: new Date(),
+              id: this.appState.user?.uid + 'xe',
+              status:'streaming',
+              type: 'TEXT',
+              value:val,
+              user: {
+                displayName:this.appState.user?.displayName||'',
+                photoURL: this.appState.user?.photoURL||'',
+                uid: this.appState.user?.uid||'',
+              }
+              
+            }
+           
+            return newVal
+          })
+        ).subscribe((val)=>{
+          this.chatSocket.streamTypingText(val);
+        })
   }
+
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit() {
     this.scrollToBottom();
+    this.messages.changes.subscribe(()=>this.scrollToBottom());
   }  
 
   private onRouteChange(params: ParamMap, token:IToken|null) {
@@ -111,6 +143,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     if (!this.roomId || !this.chatRoomId || !this.appState.userDocID ||!token) {
       return
     }
+    this.reactiveTextMessageFromControl.reset()
 
     this._db.getChatRoom(this.appState.userDocID, this.roomId)
       .pipe(
@@ -146,6 +179,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
     this.loadMessageFromObservable(this.chatSocket.getMessages());
     this.loadMessageFromObservable(this.chatSocket.getLastSentMessage());
 
+    this.streamedValue$ = this.chatSocket.getTypingStreamState()
+
   }
 
 
@@ -172,18 +207,20 @@ export class ChatViewComponent implements OnInit, OnDestroy {
   sendMessage(event: any) {
     const { code, keyCode, type } = event;
     if (!this.roomId || !this.chatRoomId || !this.appState.userDocID)
-      return;
-
-    if ((code == 'Enter' || type == 'click') && this.textMessage) {
-
-      this.chatSocket?.sendMessage({
-        value: this.textMessage,
-        msg_type: 'TEXT',
-        chat_room_id: this.chatRoomId,
-        user_uid: this.appState.userDocID,
-      })
-      this.textMessage = '';
-    }
+    return;
+  
+  if ((code == 'Enter' || type == 'click') && this.reactiveTextMessageFromControl.valid) {
+    
+    this.chatSocket?.sendMessage({
+      value: this.reactiveTextMessageFromControl.value,
+      msg_type: 'TEXT',
+      chat_room_id: this.chatRoomId,
+      user_uid: this.appState.userDocID,
+    })
+    this.reactiveTextMessageFromControl.reset();
+    // Prevent the default: this will prevent browser to focus on another element like submit button
+    event.preventDefault(); 
+  }
 
   }
 
@@ -243,14 +280,14 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 
   openInfoPanel() {
     this.drawer = !this.drawer;
-    console.log(this.drawer);
   }
 
   ngOnDestroy(): void {
     this.chatSocket?.close();
     this.destroy$.next(true);
     this.messageListSubject$.unsubscribe();
-    this.destroy$.unsubscribe()
+    this.destroy$.unsubscribe();
+    this.reactiveTextMessageFromControl.reset();
     this.subscriptions.forEach((sub) => {
       sub.unsubscribe();
     })

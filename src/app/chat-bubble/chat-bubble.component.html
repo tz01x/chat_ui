@@ -14,4 +14,9 @@
             unable to send the message
         </small>
     </div>
+    <div *ngIf="message.status=='streaming'" class="alert-secondary mt-2" >
+        <small>
+            typing...
+        </small>
+    </div>
 </div>
