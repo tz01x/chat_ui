@@ -19,16 +19,12 @@ export class ChatBubbleComponent implements OnInit,AfterViewInit {
   @Input()owner:boolean=false;
   @Input()message!:iMessage;
   @Input()timeStamp:string|number|undefined;
-  @Input()isLast:boolean|undefined;
-  @Output()lastComponentViewRender=new EventEmitter<any>();
+ 
   
   constructor(public appState:AppStateService) { 
   }
 
   ngAfterViewInit(): void {
-
-      if(!!this.isLast)
-        this.lastComponentViewRender.emit(this.isLast);
   }
   
 

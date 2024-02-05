@@ -27,9 +27,16 @@ export class ChatSocket extends SocketService{
     this._connected_with_uid = connected_with_uid;
     this.socket.emit('setRoom',{roomId:roomId,uid:this._uid,connected_with_uid});
   }
+
   sendMessage(data:iMessagePayload){
     this.socket.emit('sendMessage',data)
   }
+
+  streamTypingText(data:iMessage){
+    this.socket.emit('streamTypingText',data)
+  }
+
+
   getMessages(){
     // this.socket.fromEvent('receiveMessage').subscribe((value:any)=>{
     //   console.log(value);
@@ -39,6 +46,10 @@ export class ChatSocket extends SocketService{
 
   getLastSentMessage(){
     return this.socket.fromEvent<iMessage>('lastSentMessage');
+  }
+
+  getTypingStreamState(){
+    return this.socket.fromEvent<iMessage[]>('receiveTypingStream')
   }
 
   getUserStatus(uid:string){

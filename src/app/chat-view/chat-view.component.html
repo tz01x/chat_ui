@@ -33,8 +33,9 @@
                     </div>
                     <div class="nav-part-2">
 
-                        <button mat-icon-button (click)="openInfoPanel()">
-                            <mat-icon>info</mat-icon>
+                        <button mat-icon-button (click)="openInfoPanel()" >
+                            <mat-icon *ngIf="this.drawer==false">arrow_left</mat-icon>
+                            <mat-icon *ngIf="this.drawer==true">arrow_right</mat-icon>
                         </button>
                     </div>
                 </nav>
@@ -45,13 +46,21 @@
                         [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200">
                         <app-chat-bubble #messages *ngFor="let msg of (messageList$ | async); let last = last; trackBy msgTrackBy"
                             [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg"
-                            [isLast]="last" (lastComponentViewRender)="lastComponentViewRender()">
+                        >
                         </app-chat-bubble>
 
+                        <ng-container *ngIf="streamedValue$ |async as streamMsgs">
+
+                            <app-chat-bubble #messages 
+                                *ngFor="let msg of streamMsgs"
+                            [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg"
+                        >
+                        </app-chat-bubble>
+
+                        </ng-container>
                     </div>
                     <div class="input-section">
-                        <input type="text" class="input-field" [(ngModel)]="textMessage"
-                            (keydown)="sendMessage($event)">
+                        <input type="text" class="input-field" (keydown)="sendMessage($event)" [formControl]="reactiveTextMessageFromControl">
 
                         <button mat-raised-button color="primary" class="send-button" (click)="sendMessage($event)">
                             <mat-icon>send</mat-icon>
