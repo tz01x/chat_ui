@@ -1,6 +1,6 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router, RouterModule } from '@angular/router';
-import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription, map } from 'rxjs';
+import { catchError, combineLatest, Observable, BehaviorSubject, tap, Subject, takeUntil, EMPTY, withLatestFrom, filter, Subscription, map, debounceTime } from 'rxjs';
 import { AddUser, IChatRoom, IGetChatRoomResponse, iMessage, IToken, User } from '../interfaces';
 import { AppStateService } from '../services/app-state.service';
 import { ChatService } from '../services/chat.service';
@@ -99,6 +99,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 
         this.reactiveTextMessageFromControl.valueChanges.pipe(
           takeUntil(this.destroy$),
+          debounceTime(150),
           map((val)=>{
 
             const newVal:iMessage = {

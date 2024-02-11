@@ -30,7 +30,7 @@ $based-padding: 0.5em 1em;
 .list-item-active .list-item-box {
     background-color: rgba(168, 189, 170, 0.407);
 }
-::ng-deep .mdc-button__label{
+.list-item-box ::ng-deep .mdc-button__label{
     width: 100%;
 }
 
