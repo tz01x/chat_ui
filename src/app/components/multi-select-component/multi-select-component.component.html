@@ -1,4 +1,4 @@
-<mat-form-field class="example-chip-list">
+<!-- <mat-form-field class="example-chip-list">
     <mat-label>{{fieldLabel}}</mat-label>
     <mat-chip-list #chipGrid aria-label="Friends selection">
         <mat-chip *ngFor="let item of items|async; let i = index" (removed)="remove(i)" style="padding-left: 0;">
@@ -15,4 +15,31 @@
             <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
         </mat-option> 
     </mat-autocomplete>
-</mat-form-field>
+</mat-form-field> -->
+
+<form>
+    <mat-form-field class="example-chip-list">
+      <mat-label>{{fieldLabel}}</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Friends selection">
+        @for (item of items|async; track item.uid; let i = $index) {
+          <mat-chip-row (removed)="remove(i)">
+            <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
+            <button matChipRemove [attr.aria-label]="'remove ' + item.displayName">
+                <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input placeholder="Enter Name ..." #friendsInput [formControl]="inputCtrl"
+        [matChipInputFor]="chipGrid" [matAutocomplete]="auto"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        />
+        <!-- (matChipInputTokenEnd)="add($event)" -->
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+        @for (item of filteredItems | async; track item.uid) {
+            <app-user-avatar [displayName]="item.displayName" [photoURL]="item.photoURL"></app-user-avatar>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+  

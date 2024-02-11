@@ -159,7 +159,7 @@ export class AppStateService {
 
   toggleDarkMode() {
 
-    this.darkModeSubject.next(!this.darkModeSubject.getValue())
+    this.darkModeSubject.next(!this.darkModeSubject.getValue());
   }
 
 

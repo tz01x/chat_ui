@@ -3,16 +3,11 @@
         <button mat-icon-button> <mat-icon>closed</mat-icon> </button>
     </div> -->
     <mat-tab-group mat-align-tabs="start">
-        <mat-tab >
+        <mat-tab>
             <ng-template mat-tab-label>
-                <div
-                [matBadge]="indicator.requestIndicator$ | async" 
-                matBadgeSize="small" 
-                matBadgeOverlap="false"
-                [matBadgeHidden]="(indicator.requestIndicator$ | async) == 0"
-                matBadgeColor="warn"
-                (click)="indicator.clearRequestIndicator()"
-                >
+                <div [matBadge]="indicator.requestIndicator$ | async" matBadgeSize="small" matBadgeOverlap="false"
+                    [matBadgeHidden]="(indicator.requestIndicator$ | async) == 0" matBadgeColor="warn"
+                    (click)="indicator.clearRequestIndicator()">
                     Request
                 </div>
             </ng-template>
@@ -21,19 +16,15 @@
                     <ng-container *ngIf="friendRequests.length; else noRecords">
 
                         <div *ngFor="let user of friendRequests;">
-                            <app-add-friends-list-item 
-                            [user]="user"
-                            [buttonText]="'Accept'"
-                            [actionFunction]="acceptActionFunction"
-                            [onNextAction]="onNextAcceptAction"
-                            [onErrorAction]="onErrorAcceptAction"
-                            [btnClass]="'acceptBtn'"
-                            ></app-add-friends-list-item>
+                            <app-add-friends-list-item [user]="user" [buttonText]="'Accept'"
+                                [actionFunction]="acceptActionFunction" [onNextAction]="onNextAcceptAction"
+                                [onErrorAction]="onErrorAcceptAction"
+                                [btnClass]="'acceptBtn'"></app-add-friends-list-item>
                             <mat-divider></mat-divider>
                         </div>
                     </ng-container>
-                    
-                    
+
+
                 </ng-container>
                 <ng-template #noRecords>
 
@@ -41,34 +32,28 @@
                         No Friend Request...
                     </div>
                 </ng-template>
-               
-            
+
+
             </div>
         </mat-tab>
-        
+
         <mat-tab label="All Friends">
             <div class="search-field">
-                <mat-form-field appearance="legacy">
-                    <input type="text" matInput [formControl]="searchFormControl" placeholder="Search..">
-                    <mat-icon matSuffix>search</mat-icon>
-                </mat-form-field>
+            <mat-form-field>
+                <input type="text" matInput [formControl]="searchFormControl" placeholder="Search..">
+            </mat-form-field>
+               
             </div>
             <div class="searchResultes">
                 <div *ngFor="let user of allFriendsList$ |async">
-                    <app-add-friends-list-item 
-                    [user]="user"
-                    [buttonText]="'Remove'"
-                    [actionFunction]="actionFunction"
-                    [onNextAction]="onNextAction"
-                    [onComplectAction]="onComplectAction"
-                    [onErrorAction]="onErrorAction"
-                    [btnClass]="'abcd'"
-                    ></app-add-friends-list-item>
+                    <app-add-friends-list-item [user]="user" [buttonText]="'Remove'" [actionFunction]="actionFunction"
+                        [onNextAction]="onNextAction" [onComplectAction]="onComplectAction"
+                        [onErrorAction]="onErrorAction" [btnClass]="'abcd'"></app-add-friends-list-item>
                     <mat-divider></mat-divider>
                 </div>
             </div>
         </mat-tab>
-  
-      </mat-tab-group>
+
+    </mat-tab-group>
 
 </div>

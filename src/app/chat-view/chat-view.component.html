@@ -1,7 +1,6 @@
 <section
     [ngClass]="{'chat-view-section':true,darkMode:(appState.darkMode$|async),isViewPortLarge:appState.isViewPortLarge}"
-    *ngIf="(currentChatRoom$|async) as currentChatRoom"
->
+    *ngIf="(currentChatRoom$|async) as currentChatRoom">
     <div *ngIf="!chatSocket?.socketStatus" class="connectionStatus">
         Can not connect to server
     </div>
@@ -23,17 +22,23 @@
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                         </ng-container>
-                        <div  style="display: grid;">
+                        <div style="display: grid;">
+                            @defer (on immediate) {
+
                             <button mat-button>
-                                <app-user-avatar [imageWidth]="50" [displayName]="currentChatRoom.display_property.displayName"
+                                <app-user-avatar [imageWidth]="50"
+                                    [displayName]="currentChatRoom.display_property.displayName"
                                     [photoURL]="currentChatRoom.display_property.photoURL">
                                 </app-user-avatar>
                             </button>
+                            }@loading {
+                            loading...
+                            }
                         </div>
                     </div>
                     <div class="nav-part-2">
 
-                        <button mat-icon-button (click)="openInfoPanel()" >
+                        <button mat-icon-button (click)="openInfoPanel()">
                             <mat-icon *ngIf="this.drawer==false">arrow_left</mat-icon>
                             <mat-icon *ngIf="this.drawer==true">arrow_right</mat-icon>
                         </button>
@@ -42,25 +47,28 @@
 
 
                 <main class="chat-view-body">
-                    <div class="message-list"  #scroll appInfiniteScroll (scrollingUp)="onScrollUp()"
+                    <div class="message-list" #scroll appInfiniteScroll (scrollingUp)="onScrollUp()"
                         [restThrottleDistancePointObservable]="restDistancePointer" [throttleDistance]="200">
-                        <app-chat-bubble #messages *ngFor="let msg of (messageList$ | async); let last = last; trackBy msgTrackBy"
-                            [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg"
-                        >
+                        <app-chat-bubble #messages
+                            *ngFor="let msg of (messageList$ | async); let last = last; trackBy msgTrackBy"
+                            [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg">
                         </app-chat-bubble>
 
-                        <ng-container *ngIf="streamedValue$ |async as streamMsgs">
 
-                            <app-chat-bubble #messages 
-                                *ngFor="let msg of streamMsgs"
-                            [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221" [message]="msg"
-                        >
-                        </app-chat-bubble>
+                        @if (streamedValue$ |async; as streamMsgs) {
 
-                        </ng-container>
+                        @for (msg of streamMsgs; track msg.id) {
+                          
+
+                            <app-chat-bubble #messages [owner]="msg.user?.uid == appState.userDocID" [timeStamp]="1221"
+                                [message]="msg"></app-chat-bubble>
+                            
+                        }
+                        }
                     </div>
                     <div class="input-section">
-                        <input type="text" class="input-field" (keydown)="sendMessage($event)" [formControl]="reactiveTextMessageFromControl">
+                        <input type="text" class="input-field" (keydown)="sendMessage($event)"
+                            [formControl]="reactiveTextMessageFromControl">
 
                         <button mat-raised-button color="primary" class="send-button" (click)="sendMessage($event)">
                             <mat-icon>send</mat-icon>
